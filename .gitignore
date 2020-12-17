@@ -8,3 +8,5 @@ codes and cryptography lecture notes
 *.log
 *.out
 *.gz
+*.lz
+*-decoded.tex
