@@ -1,1 +1,10 @@
 .DS_store
+codes and cryptography lecture notes
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.gz
