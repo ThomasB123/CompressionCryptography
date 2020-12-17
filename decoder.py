@@ -24,9 +24,9 @@ decodedFile = fileName + '-decoded.tex'
 
 
 # Size of input file
-inputSize = os.path.getsize(inFile)
-print("Input file: \t" + inFile)
-print("Input size: \t" + str(inputSize) + "\n")
+#inputSize = os.path.getsize(inFile)
+#print("Input file: \t" + inFile)
+#print("Input size: \t" + str(inputSize) + "\n")
 
 ########################################
 # do decoding here
@@ -46,6 +46,6 @@ with open(decodedFile,'w') as fout:
 ########################################
 
 # Runs your decoder and prints out size of decoded file
-decodedSize = os.path.getsize(decodedFile)
-print("Decoded file: \t" + decodedFile)
-print("Decoded size: \t"  + str(decodedSize) + "\n")
+#decodedSize = os.path.getsize(decodedFile)
+#print("Decoded file: \t" + decodedFile)
+#print("Decoded size: \t"  + str(decodedSize) + "\n")

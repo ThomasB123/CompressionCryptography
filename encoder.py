@@ -33,9 +33,9 @@ encodedFile = fileName + '.lz'
 
 
 # Size of input file
-inputSize = os.path.getsize(inFile)
-print("Input file: \t" + inFile)
-print("Input size: \t" + str(inputSize) + "\n")
+#inputSize = os.path.getsize(inFile)
+#print("Input file: \t" + inFile)
+#print("Input size: \t" + str(inputSize) + "\n")
 
 ########################################
 # do encoding here
@@ -53,7 +53,7 @@ with open(encodedFile,'w') as fout:
 ########################################
 
 # Runs your encoder and prints out size of encoded file
-encodedSize = os.path.getsize(encodedFile)
-print("Encoded file: \t" + encodedFile)
-print("Encoded size: \t" + str(encodedSize) + "\n")
+#encodedSize = os.path.getsize(encodedFile)
+#print("Encoded file: \t" + encodedFile)
+#print("Encoded size: \t" + str(encodedSize) + "\n")
 
