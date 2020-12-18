@@ -33,14 +33,44 @@ encodedFile = fileName + '.lz'
 
 
 # Size of input file
-#inputSize = os.path.getsize(inFile)
-#print("Input file: \t" + inFile)
-#print("Input size: \t" + str(inputSize) + "\n")
+inputSize = os.path.getsize(inFile)
+print("Input file: \t" + inFile)
+print("Input size: \t" + str(inputSize) + "\n")
 
 ########################################
 # do encoding here
+# zip command line gets 2.5-3 compression ratio
 
+# ideas:
+# read lecture 35 and 36
+# statistical compression - two properties: frequency of symbols and context
+#   Huffman coding
+#       prefix codes
+#       use canonical huffman tree
+#       adaptive huffman coding
+#       codewords are only defined for symbols not messsages
+#   Arithmetic coding
+#       works at the sequence level, assigning a particular tag to any sequence,
+#       without working out all tags for all sequences of the same length
+#       better than huffman 
+#       use integers only in practice
+#       carry out operations in binary not decimal
+# structural compression
+#   Lempel-Ziv LZ77
+#       two methods above are for memoryless source
+#       this is for encoding fixed file of data efficiently
+#   Lempel-Ziv LZ78
+#       LZW
+#       LZMW, LZAP, LZY ####################
+# context-based compression
+#   adaptive context, no more than 10 character context
+#   prediction by partial matching PPM #####
+#       Roshal Archive file format (RAR)
+#   methods B and C
+#   context mixing - PAQ series of programs ##########
+#   Burrows-Wheeler Transform (BWT) #####
 
+# huffman coding and then run length encoding?
 
 with open(encodedFile,'w') as fout:
     fin = open(inFile,'r')
@@ -50,10 +80,11 @@ with open(encodedFile,'w') as fout:
 
 
 
+
 ########################################
 
 # Runs your encoder and prints out size of encoded file
-#encodedSize = os.path.getsize(encodedFile)
-#print("Encoded file: \t" + encodedFile)
-#print("Encoded size: \t" + str(encodedSize) + "\n")
-
+encodedSize = os.path.getsize(encodedFile)
+print("Encoded file: \t" + encodedFile)
+print("Encoded size: \t" + str(encodedSize) + "\n")
+print("COMPRESSION RATIO: \t"  + str(inputSize / encodedSize)) # higher is better
