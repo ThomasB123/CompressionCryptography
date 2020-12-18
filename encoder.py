@@ -72,6 +72,7 @@ print("Input size: \t" + str(inputSize) + "\n")
 
 # huffman coding and then run length encoding?
 
+
 with open(encodedFile,'w') as fout:
     fin = open(inFile,'r')
     for line in fin:
