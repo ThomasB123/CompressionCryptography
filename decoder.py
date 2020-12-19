@@ -32,13 +32,17 @@ print("Input size: \t" + str(inputSize) + "\n")
 # do decoding here
 
 
+inputFile = open(inFile,'r')
+outputFile = open(encodedFile,'a')
+characterStream = []
+for line in inputFile:
+    for character in line:
+        characterStream.append(character)
 
-with open(decodedFile,'w') as fout:
-    fin = open(inFile,'r')
-    for line in fin:
-        fout.write(line)
-
-
+i = 0
+while i < len(characterStream):
+    
+    i += 1
 
 
 
