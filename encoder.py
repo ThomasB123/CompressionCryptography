@@ -77,35 +77,28 @@ print("Input size: \t" + str(inputSize) + "\n")
 inputFile = open(inFile,'r')
 outputFile = open(encodedFile,'w')
 
+dictionary = {}
+for i in range(256):
+    dictionary[chr(i)] = i
+
 characterStream = []
 for line in inputFile:
     for character in line:
         characterStream.append(character)
 
-
-W = 100 # sliding window of size W
-window = []
-L = 100 # look-ahead buffer of size L
-buffer = characterStream[:L]
-i = 0
-while i < len(characterStream):
-    l = min(i,L) #for buffer length
-    match = False
-    while l > 0:
-        d = 1
-        while i-d >= 0 and i+l < len(characterStream) and d <= min(i,W): # for window length
-            # if look ahead[:l] == buffer[-d:-d+l]
-            if characterStream[i:i+l] == characterStream[i-d:i-d+l]:
-                outputFile.write(str(d) + str(l) + characterStream[i+l])
-                i += l
-                match = True
-                break
-            d += 1
-        if match: break
-        l -= 1
-    if not match:
-        outputFile.write(str(0) + str(0) + characterStream[i])
+i = 256
+characterIndex = 0
+while characterIndex < len(characterStream):
+    string = characterStream[characterIndex]
+    plus = 1
+    while string in dictionary and characterIndex+plus < len(characterStream):
+        string += characterStream[characterIndex+plus]
+        plus += 1
+    outputFile.write(str(dictionary[string[:-1]]))
+    dictionary[string] = i
     i += 1
+    characterIndex += plus
+
 
 
 inputFile.close()
