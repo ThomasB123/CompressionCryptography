@@ -72,33 +72,40 @@ print("Input size: \t" + str(inputSize) + "\n")
 
 # huffman coding and then run length encoding?
 
-# LZ77 implementation:
+# LZW implementation:
 
 inputFile = open(inFile,'r')
 outputFile = open(encodedFile,'w')
-
-dictionary = {}
-for i in range(256):
-    dictionary[chr(i)] = i
 
 characterStream = []
 for line in inputFile:
     for character in line:
         characterStream.append(character)
 
+dictionary = {}
+for x in range(0,256):
+    dictionary[chr(x)] = x
 i = 256
 characterIndex = 0
+string = ''
 while characterIndex < len(characterStream):
-    string = characterStream[characterIndex]
-    plus = 1
-    while string in dictionary and characterIndex+plus < len(characterStream):
-        string += characterStream[characterIndex+plus]
-        plus += 1
-    outputFile.write(str(dictionary[string[:-1]]))
+    string += characterStream[characterIndex]
+    while (string in dictionary) and (characterIndex < len(characterStream)-1):
+        characterIndex += 1
+        string += characterStream[characterIndex]
+    if string[:-1] not in dictionary:
+        dictionary[string[:-1]] = i
+        i += 1
     dictionary[string] = i
     i += 1
-    characterIndex += plus
+    outputFile.write(str(dictionary[string[:-1]])+',')
+    string = string[-1]
+    characterIndex += 1
+outputFile.write(str(dictionary[string[-1]]))
+# come back to this later:
+# think is related to character formattting or something
 
+# context based compression here:
 
 
 inputFile.close()

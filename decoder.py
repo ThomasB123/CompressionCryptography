@@ -33,17 +33,34 @@ print("Input size: \t" + str(inputSize) + "\n")
 
 
 inputFile = open(inFile,'r')
-outputFile = open(encodedFile,'a')
+outputFile = open(decodedFile,'w')
+
 characterStream = []
 for line in inputFile:
-    for character in line:
-        characterStream.append(character)
+    characterStream.extend(line.split(','))
 
-i = 0
-while i < len(characterStream):
-    
-    i += 1
+dictionary = []
+for x in range(0,256):
+    dictionary.append(chr(x))
+i = 256
+characterIndex = 0
+current = ''
+while characterIndex < len(characterStream):
+    number = int(characterStream[characterIndex])
+    if number < len(dictionary):
+        for x in dictionary[number]:
+            current += x
+            if current not in dictionary:
+                dictionary.append(current)
+                current = current[-1]
+        outputFile.write(dictionary[number])
+    else:
+        #dictionary.append()
+        print(number,dictionary[number-1],'hi')
+    characterIndex += 1
 
+inputFile.close()
+outputFile.close()
 
 
 ########################################
