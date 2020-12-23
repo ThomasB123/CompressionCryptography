@@ -106,6 +106,10 @@ outputFile.write(str(dictionary[string[-1]]))
 # think is related to character formattting or something
 
 # context based compression here:
+# adaptive context
+# use 5 character context for now
+
+
 
 
 inputFile.close()
