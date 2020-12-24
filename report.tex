@@ -89,216 +89,57 @@
 
 \maketitle
 
-\section{Reduce size of characters}
+
+\section{Dictionary}
+Symbols are words, coded as 1 or 2 bytes, usually as a preprocessing step.
+Use bytes rather than characters.
+It would be possible to use only characters in the encoded file to represent either a number or letter or special character, 
+but it would be much more efficient to use bytes to store information since these have the same size as a character (8 bits) 
+but they can be much more useful and versatile for encoding a numerical value as well which would otherwise require 8 bits per 
+digit.
 Since standard ASCII has 256 possible characters and so requires 8 bits to store each character, 
 we can reduce this number in our compression if we never see some of those characters, e.g. non-english characters which 
 clearly will not be used in an english .tex document. As such we could use just 7 bits to encode each character if the document
 only uses a maximum of 128 different characters. The number of bits used to encode each character should be stated at the 
 start of the encoded file such that the decoder can correctly decode the file.
 
-\section{Use bytes rather than characters}
-It would be possible to use only characters in the encoded file to represent either a number or letter or special character, 
-but it would be much more efficient to use bytes to store information since these have the same size as a character (8 bits) 
-but they can be much more useful and versatile for encoding a numerical value as well which would otherwise require 8 bits per 
-digit.
-
 \section{Prediction by Partial Matching (PPM)}
-Train model of context probabilites on Codes and Cryptography module lecture notes.
+Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
+order-n, modeled in longest context matched, but dropping to lower orders for byte counts of 0.
+Since the .tex file will be typeset in English, it is possible to predict the next character, 
+given the previous character(s). As such, a statistical model of english text is appropriate to use. 
+This statistical model can be 'trained' on lots of english text such as Alice in Wonderland, 
+and other .tex documents such as the lecture notes for this module. 
+When using PPM, there are three methods for assigning frequencies to the escape symbol. 
+The most appropriate method for this scenario is Method C since it takes into account the fact that 
+some contexts can be followed by virtually any other character by giving the escape symbol 
+an appropriate count, whilst not reducing the count of other symbols.
 
 \section{Context mixing}
-Pass
-
-\section{Burrows-Wheeler transform (BWT)}
-Pass
-
-\section{Lempel-Ziv Welch}
-Pass
-
-
-\section{Statistical compression I: Huffman coding}
-\label{sec:01}
-
-
-\subsection{Prefix codes}
-
-\paragraph{Memoryless sources}
-
-We have some data that we wish to encode. It could be anything: Spoken English, Data from a digital camera sensor, DNA string, etc.
-
-We model our data as coming from a memoryless source $X$. We imagine that symbols are emitted at random according to the probability distribution of $X$. In other words, we view our data as a random string $X_1, X_2, \dots$ over some alphabet $\mathcal{X}$. Our memoryless assumption is that those form a sequence of independent identically distributed (i.i.d.) random variables: $X_i \sim X$ for all $i$.
-
-More concretely, for any $x \in \mathcal{X}$ and any $i$, the probability 
-\[
-    \probability(X_i = x)
-\]
-is independent of $i$, and of all previous or future emitted symbols.
-
-Note that this is not always a valid assumption. We will look into source modelling into more detail in the next lectures.
-
-\paragraph{The coding problem}
-
-We have a source emitting symbols in $\mathcal{X} = \{x_1, \dots, x_n\}$ with respective probabilities  $\{p_1, \dots, p_n\}$.
-
-Question: If  $\mathcal{D}$ is an alphabet of  $D$ code symbols, how can we encode the source symbols using code words (finite strings of code symbols) as economically as possible?
-
-Formally: a \Define{source code} is a map $C : \mathcal{X} \to \mathcal{D}^*$
-where  $\mathcal{D}^*$     is the set of all finite strings of symbols in  $\mathcal{D}$.
-
-The words $C(x)$ are called the \Define{codewords}, and the integers $|C(x)|$ (the length of $C(x)$) are the \Define{word lengths}.
-
-We can extend the code to messages as follows. A \Define{message} is any finite string of source symbols $m = m_1 \dots m_k \in \mathcal{X}^*$ and its encoding is the obvious concatenation 
-\[
-    C(m) = C(m_1) C(m_2) \dots C(m_k).
-\]
-
-\paragraph{Prefix codes}
-
-
-A code $C$ is \Define{uniquely decodable} (a.k.a. uniquely decipherable) if every finite string in $\mathcal{D}^*$ is the image of at most one message. 
-
-A prefix of a word $w = w_1 \dots w_k \in \mathcal{D}^*$ is any word of the form $w_1 \dots w_l$ for some $0 \le l \le k$ (for $l=0$, we obtain the empty word). A code is \Define{prefix} (a.k.a. instantaneous or prefix-free) if there are no two distinct source symbols $x, y \in \mathcal{X}$ such that $C(x)$ is a prefix of  $C(y)$         .
-
-\begin{theorem}
-A prefix code is uniquely decodable.
-\end{theorem}
-
-\begin{proof}
-Let $C$ be a prefix code, and let $w = C(m)$ for some message $m = m_1 \dots m_k \in \mathcal{X}^*$. We give a decoding algorithm which, given $w$, determines $m$. Let $w = w_1 \dots w_l$.
-
-Let $i$ be the smallest integer such that $w_1 \dots w_i$ is a codeword, say $w_1 \dots w_i = C(x)$. Then the $m_1 = x$. Indeed, if $m_1 = y \ne x$, then $C(x)$ is a prefix of $C(y)$, which is a contradiction. Then repeat this step, beginning with $w_{i+1}$ and hence determining $m_2$, and so on until $w$ is empty.
-\end{proof}
-
-\begin{example}
-Let $\mathcal{X} = \{a, b, c, d, e\}$, $\mathcal{D} = \{0,1\}$ and 
-\begin{align*}
-    C(a) &= 01\\
-    C(b) &= 100\\
-    C(c) &= 101\\
-    C(d) &= 1101\\
-    C(e) &= 1111.
-\end{align*}
-
-Suppose we need to decode the word $C(m) = w = 10010111011111100101$. We proceed as follows. We read the word until we reach a codeword:
-\begin{align*}
-    w_1 &= 1\\
-    w_1 w_2 &= 10\\
-    w_1 w_2 w_3 &= 100 = C(b). 
-\end{align*}
-Therefore $m_1 = b$. We continue until we reach a codeword:
-\begin{align*}
-    w_4 &= 1\\
-    w_4 w_5 &= 10\\
-    w_4 w_5 w_6 &= 101 = C(c). 
-\end{align*}
-Therefore $m_2 = c$. And so on... Exercise \ref{exercise:prefix} asks you to finish this simple example.
-\end{example}
-
-
-\subsection{Huffman codes}
-
-
-\paragraph{Compact codes}
-
-Our main aim is to design codes where the typical length of messages is reduced dramatically. The basic idea is to assign short codewords to more frequent symbols and longer codewords to less frequent ones.
-
-
-More formally, the \Define{average length} (a.k.a. expected length) of the code is 
-\[
-    L(C) = \expectation( |C(X)| ) = \sum_{x \in \mathcal{X}} |C(x)| \probability(X = x).
-\]
-
-A code is \Define{compact} (for a given source $X$) if it is uniquely decodable and it minimises the average length of codewords over all uniquely decodable codes.
-
-
-\begin{theorem}
-A uniquely decodable code with prescribed word lengths exists if and only if a prefix code with the same word lengths exists.
-\end{theorem}
-
-
-\begin{corollary}
-For any source $X$, there is a compact prefix code for $X$.
-\end{corollary}
-
-
-\paragraph{Binary Huffman code}
-
-
-The key is to construct a tree where the leaves correspond to the symbols in  $\mathcal{X}$ and the paths from the root to the leaves give the codewords.
-
-The tree is constructed iteratively. Suppose $\mathcal{X} = \{x_1, \dots, x_n\}$ with $p_1 \ge p_2 \ge  \dots \ge p_{n-1} \ge p_n$. Then merge $x_{n-1}$ and $x_n$ into a new symbol, say $x_{n-1, n}$ with probability $p_{n-1} + p_n$, and let $x_{n-1}$ and $x_n$ be the children of $x_{n-1, n}$ on the tree. Label the edges from $x_{n-1, n}$ to its children as $0$ and $1$, respectively. Repeat for the new source $X^{(1)} = \{x_1, \dots, x_{n-2}, x_{n-1, n} \}$ (making sure to order the symbols in non-decreasing probability). Repeat until the final source $X^{(n-1)}$ only has one symbol left with probability $1$; that symbol is the root of the tree. 
-
-Once the tree is built, read off the labels on the path from the root to a leaf to get the corresponding codeword.
-
-\begin{example} \label{example:huffman}
-Let $X$ with respective probabilities $a: 0.4, b: 0.2, c: 0.15, d:0.15, e:0.1$.
-
-\begin{tikzpicture}[xscale=2]
-    %\node (a0) at (0,4) {$a$}; %0.4
-    %\node (b0) at (0,3) {$b$}; %0.2
-    %\node (c0) at (0,2) {$c$}; %0.15
-    \node (d0) at (1,2) {$d$}; %0.15
-    \node (e0) at (1,1) {$e$}; %0.1
-    
-    %\node (a1) at (1,4) {$a$}; %0.4
-    %\node (de1) at (1,3) {$de$}; %0.25
-    \node (b1) at (1,4) {$b$}; %0.2
-    \node (c1) at (1,3) {$c$}; %0.15
-    
-    %\node (a2) at (2,4) {$a$}; %0.4
-    \node (bc2) at (2,4) {$bc$}; %0.35
-    \node (de2) at (2,2) {$de$}; %0.25
-
-    \node (bcde3) at (3,4) {$bcde$}; %0.6
-    \node (a3) at (3,3) {$a$}; %0.4
-
-    \node (abcde4) at (4,4) {$abcde$}; %1
-
-\draw (de2) -- node[above] {$0$} ++(d0);
-\draw (de2) -- node[below] {$1$} ++(e0);
-
-\draw (bc2) -- node[above] {$0$} ++(b1);
-\draw (bc2) -- node[below] {$1$} ++(c1);
-
-\draw (bcde3) -- node[above] {$0$} ++(bc2);
-\draw (bcde3) -- node[below] {$1$} ++(de2);
-
-\draw (abcde4) -- node[above] {$0$} ++(bcde3);
-\draw (abcde4) -- node[below] {$1$} ++(a3);
-
-
-\end{tikzpicture}
-
-The code is then
-\begin{align*}
-    C(a) &= 1\\
-    C(b) &= 000\\
-    C(c) &= 001\\
-    C(d) &= 010\\
-    C(e) &= 011
-\end{align*}
-The average length is then $2.2$ bits per symbol.
-\end{example}
-
-
-Note that there is no need for general tie-breaking rules. Indeed, different merges may yield different codes, and maybe even different code lengths, but always the same expected length. Similarly, the assignment of $0$ or $1$ does not change the code lengths.
-
-\paragraph{Huffman codes are compact} Clearly, Huffman codes are prefix. The proof that they are compact is by induction on the number of symbols and omitted. It can be found in \cite[Section 5.8]{CT06}.
-
-
-\paragraph{Non-binary Huffman codes}
-
-Huffman codes can be extended to non-binary alphabets: If we have an alphabet of $D$ characters, we group the $D$ least likely symbols at each stage of reducing the source. When expanding the code we append each of the $D$ characters to one of the least likely symbols’ codewords.
-
-We must end up with exactly $D$ symbols in the final source, so we may need to pad the original source up to $D+k(D-1)$ by adding symbols of probability $0$.
-
-\subsection{See further}
-
-\paragraph{Codes and Automata} The mathematical theory of uniquely decodable codes is reviewed in \cite{BPR10}, where they are simply referred to as codes. The language generated by a prefix code can be recognised by very a simple deterministic finite automaton; in fact, the relation between codes and automata is very deep and explored throughout the book. Note that this book hardly talks about data compression!
-
-\paragraph{Canonical Huffman codes} As we shall see in Exercise \ref{exercise:huffman_unequal_lengths}, there can be several different Huffman trees for the same source. However, there is always a so-called canonical Huffman tree (and hence code) with a special shape that can be easily computed; see \cite[3.2.2]{Say12}.
-
-\paragraph{Adaptive Huffman coding} Huffman coding is based on a source $X$ with given probabilities. In general, the probability of an element is computed by its relative frequency in the message; for instance, if the message has 100 characters, 34 of them are ``e'', then the probability of ``e'' is 34\%. Computing those probabilities then requires scanning the whole document before building the tree. Adaptive Huffman coding, on the other hand, builds the Huffman tree as the document is scanned, making small updates (if any) each time a new character is scanned.
-
+bits modeled by combining predictions of independent models
+The cutting edge in lossless compression in terms of compression ratio is achieved by combining 
+the next-symbol predictions of two or more statistical models, producing more accurate predictions 
+than any model individually.
+
+\section{Lempel-Ziv (LZ)}
+Symbols are strings.
+LZ77 - repeated strings are coded by offset and length of previous occurence
+LZ Welch - repeats are coded as indexes into dynamically built dictionary
+Reduced Offset LZ - LZW with multiple small dictionaries selected by context
+LZ predictive - ROLZ with dictionary size of l
+
+\section{Burrows-Wheeler Transform (BWT)}
+Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
+Symbol Ranking - Order-n, modeled by time since last seen.
+Burrows-Wheeler Transform - Bytes are sorted by context, then modeled by order-0 Symbol Ranking
+
+\section{Dynamic Markov Coding}
+Bits modeled by PPM
+
+\section{Long Short Term Memory (LSTM)}
+Long short term memory - Context Mixing using neural network models.
+
+\cite{TextBenchmark}
 
 \bibliographystyle{plain}
 \bibliography{references}

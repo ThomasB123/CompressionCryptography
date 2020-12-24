@@ -33,9 +33,9 @@ encodedFile = fileName + '.lz'
 
 
 # Size of input file
-inputSize = os.path.getsize(inFile)
-print("Input file: \t" + inFile)
-print("Input size: \t" + str(inputSize) + "\n")
+#inputSize = os.path.getsize(inFile)
+#print("Input file: \t" + inFile)
+#print("Input size: \t" + str(inputSize) + "\n")
 
 ########################################
 # do encoding here
@@ -82,35 +82,122 @@ for line in inputFile:
     for character in line:
         characterStream.append(character)
 
-dictionary = {}
-for x in range(0,256):
-    dictionary[chr(x)] = x
-i = 256
-characterIndex = 0
-string = ''
-while characterIndex < len(characterStream):
-    string += characterStream[characterIndex]
-    while (string in dictionary) and (characterIndex < len(characterStream)-1):
-        characterIndex += 1
+def LZW():
+    dictionary = {}
+    for x in range(0,256):
+        dictionary[chr(x)] = x
+    i = 256
+    characterIndex = 0
+    string = ''
+    while characterIndex < len(characterStream):
         string += characterStream[characterIndex]
-    if string[:-1] not in dictionary:
-        dictionary[string[:-1]] = i
+        while (string in dictionary) and (characterIndex < len(characterStream)-1):
+            characterIndex += 1
+            string += characterStream[characterIndex]
+        if string[:-1] not in dictionary:
+            dictionary[string[:-1]] = i
+            i += 1
+        dictionary[string] = i
         i += 1
-    dictionary[string] = i
-    i += 1
-    outputFile.write(str(dictionary[string[:-1]])+',')
-    string = string[-1]
-    characterIndex += 1
-outputFile.write(str(dictionary[string[-1]]))
-# come back to this later:
-# think is related to character formattting or something
+        outputFile.write(str(dictionary[string[:-1]])+',')
+        string = string[-1]
+        characterIndex += 1
+    outputFile.write(str(dictionary[string[-1]]))
+    # come back to this later:
+    # think is related to character formattting or something
+
+def updateModel(characterStream,context,maxOrder):
+    index = 0
+    while index < len(characterStream):
+        currentCharacter = characterStream[index]
+        for i in range(0,maxOrder+1):
+            if index >= i:
+                characters = ''.join(characterStream[index-i:index])
+                if characters in context[i]:
+                    if currentCharacter not in context[i][characters]:
+                        context[i][characters][currentCharacter] = 1
+                    else:
+                        context[i][characters][currentCharacter] += 1
+                else:
+                    context[i][characters] = {None:1,currentCharacter:1} # Method A, None is escape character
+        index += 1
+    return context
+
+def L(char,probs):
+    low = 0
+    if char == None:
+        return 1-probs[None]
+    for i in probs:
+        if i != None:
+            if i == char:
+                return low
+            low += probs[i]
+
+def H(char,probs):
+    high = 0
+    if char == None:
+        return 1
+    for i in probs:
+        if i != None:
+            high += probs[i]
+            if i == char:
+                return high
+
+def PPM(characterStream,context,maxOrder):
+    #maxOrder = 2
+    #context = {}
+    #for i in range(maxOrder+1):
+    #    context[i] = {}
+    index = 0
+    Low = 0
+    Lstar = '000000'
+    High = 63
+    Hstar = '111111'
+    while index < len(characterStream):
+        #context = updateModel(characterStream[:index+1],context,maxOrder)
+        currentCharacter = characterStream[index]
+        # arithmetic coding here, but for each context
+        contextOrder = maxOrder
+        noContext = True
+        while noContext: # reduce order of context if can't find
+            if index >= contextOrder:
+                characters = ''.join(characterStream[index-contextOrder:index])
+                thisContext = context[contextOrder][characters] # should always be there if seen before
+                total = 0
+                # how do you work out how many bits for Low and High
+                # assume 6 bit word length for arithmetic coding
+                for x in thisContext:
+                    total += thisContext[x]
+                if currentCharacter in thisContext:
+                    noContext = False
+                    newLow = Low + (High-Low+1) * thisContext[currentCharacter]/total
+                    newHigh = High + (High-Low+1) * thisContext[currentCharacter]/total - 1
+                else:
+                    newLow = Low + (High-Low+1) * thisContext[None]/total
+                    newHigh = High + (High-Low+1) * thisContext[None]/total - 1
+                Lstar = bin(int(newLow))[2:] # because 6 bit
+                for i in range(6-len(Lstar)):
+                    Lstar = '0' + Lstar
+                Hstar = bin(int(newHigh))[2:] # because 6 bit
+                for i in range(6-len(Hstar)):
+                    Hstar = '0' + Hstar
+                Low = newLow
+                High = newHigh
+                print(currentCharacter,Lstar,Hstar)
+            contextOrder -= 1
+        index += 1
 
 # context based compression here:
 # adaptive context
 # use 5 character context for now
-
-
-
+maxOrder = 2
+context = {}
+for i in range(maxOrder+1):
+    context[i] = {}
+newContext = updateModel(characterStream,context,maxOrder) # use this to update statistical model of text
+print(newContext)
+PPM(characterStream,newContext,2)
+print(bin(int(1/3*64)))
 
 inputFile.close()
 outputFile.close()
@@ -121,7 +208,7 @@ outputFile.close()
 ########################################
 
 # Runs your encoder and prints out size of encoded file
-encodedSize = os.path.getsize(encodedFile)
-print("Encoded file: \t" + encodedFile)
-print("Encoded size: \t" + str(encodedSize) + "\n")
-print("COMPRESSION RATIO: \t"  + str(inputSize / encodedSize)) # higher is better
+#encodedSize = os.path.getsize(encodedFile)
+#print("Encoded file: \t" + encodedFile)
+#print("Encoded size: \t" + str(encodedSize) + "\n")
+#print("COMPRESSION RATIO: \t"  + str(inputSize / encodedSize)) # higher is better
