@@ -11,9 +11,9 @@ import random
 import re
 import os
 
-m = b'0123456789abcdef'
+m = b'0123456789abcdef' # message
 m.hex()
-k = b'DUCrypto' # if key is correct then output will be a80f2c74f235484
+k = b'12345678' # if key is correct then output will be a80f2c74f235484
 key = DesKey(k)
 c = key.encrypt(m)
 print(c)
