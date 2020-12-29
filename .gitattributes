@@ -1,0 +1,2 @@
+data1.json filter=lfs diff=lfs merge=lfs -text
+data2.json filter=lfs diff=lfs merge=lfs -text

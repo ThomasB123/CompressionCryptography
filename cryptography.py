@@ -4,40 +4,28 @@
 # not marked for novelty, marked for efficiency
 
 from des import DesKey # this is what he is using
-from Cryptodome.Cipher import DES
-from Cryptodome.Random import get_random_bytes
+#from Cryptodome.Cipher import DES
+#from Cryptodome.Random import get_random_bytes
 import string
 import random
 import re
 import os
 
-m = b'0123456789abcdef' # message
-m.hex()
+string = 'heavy.br'
+m = bytes(string,'utf8')
+print(m.hex())
 k = b'12345678' # if key is correct then output will be a80f2c74f235484
 key = DesKey(k)
 c = key.encrypt(m)
-print(c)
 print(c.hex()) # a80f2c74f235484 if using correct key
 
-print(c.hex() == 'a80f2c74f235484')
+print(c.hex() == 'a80f2c74f235484e')
 '''4c7...'''
 
-'''
-key = b'-8B key-'
-cipher = DES.new(key,DES.MODE_ECB)
-plaintext = b'heavy.bravo.goal'#s'
-msg = cipher.encrypt(plaintext)
-print(msg)
-integer = int.from_bytes(msg,'big')
-print(integer)
-hexi = hex(integer)
-print(hexi)
-#print(hexi == 0x903408ec4d951acfaeb47ca88390c475)
-print(hexi == '0x95fa49223b1e30d0')
-'''
 # hexi = 0x903408ec4d951acfaeb47ca88390c475
 # hexi is 32 characters long, so 16 bytes, so plaintext is 16 characters, so w3w musy be at least 9 is using padding
 
+# brute force approach:
 '''
 regex = r"^/*[^0-9`~!@#$%^&*()+\-_=[{\]}\\|'<,.>?/\";:£§º©®\s]{1,}[・.][^\s]{1,}[・.][^\s]{1,}$"
 i = 0
@@ -60,22 +48,4 @@ while True:
         pass
 print('Found Key: {}'.format(key))
 print('Found plaintext: {}'.format(plain))
-'''
-
-'''
-print(bytes.fromhex(hexi[2:]))
-#print(bytes.fromhex('903408ec4d951acfaeb47ca88390c475'))
-cipherbytes = bytes.fromhex(hexi[2:])
-cipherbytes = bytes.fromhex('903408ec4d951acfaeb47ca88390c475')
-plain = cipher.decrypt(cipherbytes)
-print(plain.decode())
-
-
-outcome = 0x903408ec4d951acfaeb47ca88390c475
-print(int(outcome))
-key = DesKey(b'some key')
-encrypted = key.encrypt(b'any long message')
-print(encrypted)
-decrypted = key.decrypt(encrypted)
-print(decrypted)
 '''
