@@ -10,8 +10,12 @@ with open("words_dictionary.json",'r') as infile:
 with open('english2.txt','r') as infile:
     for line in infile:
         word = line[:-1]
-        if 4 <= len(word) <= 8:
+        if 4 <= len(word) <= 6 and "'" not in word:
             words[word] = None
+
+with open('english.txt','w') as outfile:
+    for word in words:
+        outfile.write(word+'\n')
     
 print(len(words))
 
@@ -21,11 +25,12 @@ print(re.findall(regex,'a.a.a'))
 print(len(words))
 w3w = {}
 for a in words:
-    if a[:8] not in w3w and a[:7]+'.' not in w3w:
-        for b in words:
+    for b in words:
+        if len(a+b) <= 10:
             address = (a+'.'+b)[:8]
-            if address not in w3w and len(address) == 8:
+            if address not in w3w:
                 w3w[address] = 1
+                #w3w[bytes(address,'utf8').hex()] = 1
 with open('data1.json','w') as f:
     json.dump(w3w,f)
 print(len(w3w))

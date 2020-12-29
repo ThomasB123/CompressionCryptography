@@ -41,5 +41,10 @@ We can break ciphertext in half to work out each half of the plaintext at a time
 address such as "heavy.br" produces the first half of the ciphertext "90 34 08 ec 4d 95 1a cf" then we have found part of the 
 address which was encrypted.
 encrypt.exe "heavy.br" == 90 34 08 ec 4d 95 1a cf 
+I could narrow it down the around 7 million possibilities for the first half of the plaintext, using this I would then 
+test out all seconmd half possibilities. However this would take a long time (60 days) due to the inbuilt delay in the encrypter.
+
+Any attempt at running the executable file encrypt.exe multiple times will not work since the program has a built in 
+0.5 second delay in order to prevent brute force attacks.
 
 \end{document}
