@@ -11,16 +11,28 @@ import random
 import re
 import os
 
-string = 'heavy.br'
-m = bytes(string,'utf8')
-print(m.hex())
-k = b'12345678' # if key is correct then output will be a80f2c74f235484
-key = DesKey(k)
-c = key.encrypt(m)
-print(c.hex()) # a80f2c74f235484 if using correct key
+def encryptHex(hexString,k):
+    m = bytes.fromhex(hexString)
+    key = DesKey(k)
+    c = key.encrypt(m)
+    c = c.hex()
+    print(c)
+    return c
 
-print(c.hex() == 'a80f2c74f235484e')
-'''4c7...'''
+hexString = '1000000000000001'#0000000000000001'
+k = b'00000000'
+encryptHex(hexString,k)
+
+#string = 'heavy.br'
+#m = bytes(string,'utf8')
+#print(m.hex())
+#k = b'12345678' # if key is correct then output will be a80f2c74f235484
+#key = DesKey(k)
+#c = key.encrypt(m)
+#print(c.hex()) # a80f2c74f235484 if using correct key
+
+#print(c.hex() == 'a80f2c74f235484e')
+#'''4c7...'''
 
 # hexi = 0x903408ec4d951acfaeb47ca88390c475
 # hexi is 32 characters long, so 16 bytes, so plaintext is 16 characters, so w3w musy be at least 9 is using padding

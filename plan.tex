@@ -47,4 +47,21 @@ test out all seconmd half possibilities. However this would take a long time (60
 Any attempt at running the executable file encrypt.exe multiple times will not work since the program has a built in 
 0.5 second delay in order to prevent brute force attacks.
 
+Each word of the what 3 words address can only be 4,5, or 6 letters long, with the total length of the three words being no more than 14, 
+possible combinations are:
+4,4,4
+4,4,5
+4,4,6 *
+4,5,4
+4,5,5 *
+4,6,4 *
+5,4,4
+5,4,5 *
+5,5,4 *
+6,4,4 *
+
+If padding is not being used then only combinations marked with an * are possible.
+
+Solution is something to do with cryptanalysis, linear or differential
+
 \end{document}
