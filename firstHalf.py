@@ -17,10 +17,11 @@ for x in data:
     reference[i] = x
     i += 1
 print('Finished concatenating')
+exit()
 encrypted = subprocess.run(['encrypt.exe',toEncrypt],stdout=subprocess.PIPE).stdout.decode('utf-8')[:-2]
 print('Finished encrypting')
 encryptedData = {}
-for x in range(len(encrypted)/16-1):
+for x in range(len(encrypted)//16-1):
     encryptedData[encrypted[x*16:x*16+16]] = x
 end = time.time()
 print('Took',end-start,'seconds')
