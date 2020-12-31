@@ -31,7 +31,7 @@ for x in data:
                 index = encryptedData['aeb47ca88390c475']
                 #index = encryptedData['903408ec4d951acf']
                 print(index+((i-1//2047)*2047+1))
-                print(reference[index+((i-1//2047)*2047+1]
+                print(reference[index+((i-1//2047)*2047)+1])
                 print('Found it!')
                 end = time.time()
                 print('Took',end-start,'seconds')
