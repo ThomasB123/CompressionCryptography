@@ -17,7 +17,7 @@
 
 \section{Attack Plan}
  
-My plan to crack the code involves exploiting the weakness of the ECB mode of operation, and the limited number of possible what3words addresses.
+My plan to crack the code involves exploiting the weakness of the Electronic Code Book (ECB) mode of operation, and the limited number of possible what3words addresses.
 
 First of all we can establish for certain that the what3words address which was encrypted can be no more than 16 letters long (including '.' dividers). 
 We know this because the ciphertext is 16 bytes long (32 hexadecimal characters) and using DES in ECB mode of operation does not itself add any padding or parity bits. 
