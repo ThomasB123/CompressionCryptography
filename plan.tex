@@ -31,11 +31,12 @@ Knowing this means that the longest possible word used in the plaintext w3w addr
 Since there are two '.' dividers in the 16 characters, meaning that the combined length of the three words is 14.
 
 I then took a dictionary of 65,000 UK English words from \href{http://gwicks.net/dictionaries.htm}{here} and filtered them down to words of length 4, 5, or 6. 
-I also filtered out words which contained an apostrophe, since I read that part of the word selection criteria is that the words do not contain any punctuation. 
+I also filtered out words which contained an apostrophe, because I read that part of the word selection criteria is that the words do not contain any punctuation. 
 This left me with 14,657 possible words which could make up this 16-letter long address. 
 
 The next stage involved exploiting the weakness of ECB in this situation, since the key was 8 bytes long, yet the input and output were 16 bytes, 
 we know that the same key was used for each half of the ciphertext and that the two halves are independent of each other. 
+This is the biggest weakness of ECB. 
 So, we can split the ciphertext in half and try to work out each half of the plaintext individually. 
 
 Using the list of 14,657 words, I then set about producing all of the possible first halves of the plaintext. 
@@ -45,7 +46,8 @@ However, I also took into consideration the fact that some combinations of certa
 such as two 6-letter words, or a 5 letter and a 6-letter word, since this would make the overall w3w address length more than 16 letters. 
 Using this additional criterion, as well as eliminating combinations which were duplicates when considering the first 8 letters only, 
 I produced 7,109,081 possibilities for the first half (8 bytes) of the plaintext. 
-This is an improvement over the naive approach by a factor of 30. 
+This is an improvement over the naive approach by a factor of 30, 
+and also a tiny fraction of the total number of w3w addresses ($57*10^{12}$). 
 I also converted each of these strings to hexadecimal, the format required by the 'encrypt.exe' program. 
 
 The next task was to try each of these possibilities on the 'encrypt.exe' program to see which of them, when encrypted, 
