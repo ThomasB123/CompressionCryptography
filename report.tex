@@ -104,6 +104,7 @@ only uses a maximum of 128 different characters. The number of bits used to enco
 start of the encoded file such that the decoder can correctly decode the file.
 
 \section{Prediction by Partial Matching (PPM)}
+Lectures.
 Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
 order-n, modeled in longest context matched, but dropping to lower orders for byte counts of 0.
 Since the .tex file will be typeset in English, it is possible to predict the next character, 
@@ -114,14 +115,19 @@ When using PPM, there are three methods for assigning frequencies to the escape 
 The most appropriate method for this scenario is Method C since it takes into account the fact that 
 some contexts can be followed by virtually any other character by giving the escape symbol 
 an appropriate count, whilst not reducing the count of other symbols.
+I considered using Dynamic Markov compression, which uses predictive arithmetic coding similar to prediction by partial matching (PPM), 
+except that the input is predicted one bit at a time rather than one byte at a time
+Bits modeled by PPM
 
 \section{Context mixing}
+See Further.
 bits modeled by combining predictions of independent models
 The cutting edge in lossless compression in terms of compression ratio is achieved by combining 
 the next-symbol predictions of two or more statistical models, producing more accurate predictions 
 than any model individually.
 
 \section{Lempel-Ziv (LZ)}
+Lectures.
 Symbols are strings.
 LZ77 - repeated strings are coded by offset and length of previous occurence
 LZ Welch - repeats are coded as indexes into dynamically built dictionary
@@ -129,21 +135,23 @@ Reduced Offset LZ - LZW with multiple small dictionaries selected by context
 LZ predictive - ROLZ with dictionary size of l
 
 \section{Burrows-Wheeler Transform (BWT)}
+The Burrows-Wheeler Transform will rearrange a character string into runs of similar characters. 
+This makes it very easy to use move-to-front transform and then run-length encoding.
+Since in this scenario we are able to scan the entire file before encoding it, 
+The BWT improves the efficiency of the compression algorithm without storing any extra data other than the 
+position of the first original character. 
+we can use the Burrows-Wheeler transform (BWT) converts a list of symbols into a much more structured list.
 Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
 Symbol Ranking - Order-n, modeled by time since last seen.
 Burrows-Wheeler Transform - Bytes are sorted by context, then modeled by order-0 Symbol Ranking
 
-\section{Dynamic Markov Coding}
-Bits modeled by PPM
+\section{Move-to-front transform}
+The move-to-front (MTF) transform allows for encoding a stream of bytes, and performs particularly well on sorted byte streams.
 
-\section{Long Short Term Memory (LSTM)}
-Long short term memory - Context Mixing using neural network models.
+\section{Run-length encoding}
+Run-length encoding (RLE) is where the actual compression will happen, after the data has been transformed twice by 
+BWT and MTF.
 
-
-http://www.mattmahoney.net/dc/text.html
-https://mattmahoney.net/dc/dce.html#Section_422
-https://tarsa.github.io/lossless-benchmark/
-https://en.wikipedia.org/wiki/PAQ
 
 
 
