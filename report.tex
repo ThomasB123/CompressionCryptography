@@ -90,21 +90,19 @@
 \maketitle
 
 
-\section{Dictionary}
+\section{Adaptive Huffman coding}
+Adaptive Huffman coding, Huffman codes are dynamically recreated for better and faster compression.
+Algorithm Vitter
+Dictionary:
 Symbols are words, coded as 1 or 2 bytes, usually as a preprocessing step.
-Use bytes rather than characters.
-It would be possible to use only characters in the encoded file to represent either a number or letter or special character, 
-but it would be much more efficient to use bytes to store information since these have the same size as a character (8 bits) 
-but they can be much more useful and versatile for encoding a numerical value as well which would otherwise require 8 bits per 
-digit.
-Since standard ASCII has 256 possible characters and so requires 8 bits to store each character, 
-we can reduce this number in our compression if we never see some of those characters, e.g. non-english characters which 
-clearly will not be used in an english .tex document. As such we could use just 7 bits to encode each character if the document
-only uses a maximum of 128 different characters. The number of bits used to encode each character should be stated at the 
-start of the encoded file such that the decoder can correctly decode the file.
 
-\section{Prediction by Partial Matching (PPM)}
-Lectures.
+\section{Context mixing}
+See Further.
+bits modeled by combining predictions of independent models
+The cutting edge in lossless compression in terms of compression ratio is achieved by combining 
+the next-symbol predictions of two or more statistical models, producing more accurate predictions 
+than any model individually.
+Prediction by Partial Matching (PPM)
 Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
 order-n, modeled in longest context matched, but dropping to lower orders for byte counts of 0.
 Since the .tex file will be typeset in English, it is possible to predict the next character, 
@@ -118,17 +116,11 @@ an appropriate count, whilst not reducing the count of other symbols.
 I considered using Dynamic Markov compression, which uses predictive arithmetic coding similar to prediction by partial matching (PPM), 
 except that the input is predicted one bit at a time rather than one byte at a time
 Bits modeled by PPM
+\href{https://mattmahoney.net/dc/dce.html#Section_422}{Explanation}
 
-\section{Context mixing}
-See Further.
-bits modeled by combining predictions of independent models
-The cutting edge in lossless compression in terms of compression ratio is achieved by combining 
-the next-symbol predictions of two or more statistical models, producing more accurate predictions 
-than any model individually.
-
-\section{Lempel-Ziv (LZ)}
-Lectures.
+\section{Lempel-Ziv-Welch}
 Symbols are strings.
+Lempel-Ziv-Welch (LZW)
 LZ77 - repeated strings are coded by offset and length of previous occurence
 LZ Welch - repeats are coded as indexes into dynamically built dictionary
 Reduced Offset LZ - LZW with multiple small dictionaries selected by context
@@ -144,6 +136,7 @@ we can use the Burrows-Wheeler transform (BWT) converts a list of symbols into a
 Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
 Symbol Ranking - Order-n, modeled by time since last seen.
 Burrows-Wheeler Transform - Bytes are sorted by context, then modeled by order-0 Symbol Ranking
+\href{https://en.wikipedia.org/wiki/Burrows-Wheeler_transform}{check this}
 
 \section{Move-to-front transform}
 The move-to-front (MTF) transform allows for encoding a stream of bytes, and performs particularly well on sorted byte streams.
@@ -152,7 +145,10 @@ The move-to-front (MTF) transform allows for encoding a stream of bytes, and per
 Run-length encoding (RLE) is where the actual compression will happen, after the data has been transformed twice by 
 BWT and MTF.
 
-
+\href{https://sites.google.com/site/datacompressionguide/}{this is good}
+\href{https://en.wikipedia.org/wiki/PAQ}{.}
+\href{https://tarsa.github.io/lossless-benchmark/}{.}
+\href{https://www.mattmahoney.net/dc/text.html}{Benchmark}
 
 
 \cite{TextBenchmark}
