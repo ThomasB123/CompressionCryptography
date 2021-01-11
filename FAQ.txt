@@ -73,3 +73,74 @@ A14: 21/01/2021
 Q15: Just to check are we expected to be coming up with an implementation, as in if we just use a existing password cracking software would that not be correct?
 
 A15: You are expected to come up with an implementation.
+
+
+Q16: I just wanted to ask how the size of any dictionary/data structures used in the LaTeX compression part of our coursework will impact our mark.
+Would it be acceptable to have a very large encoding/decoding dictionary if that meant we had a smaller .lz file, or will you be taking into account the combined size of both files?
+
+A16: You may use a large static dictionary, i.e. the dictionary should not be produced from the given input tex file. Then only the size of the .lz counts. But make sure that your python program works with the testEncoderDecoder.py script provided.
+
+
+Q17: Is it acceptable for one or more of the key ideas mentioned in the report to not make it into the final compression algorithm? As in, I tried idea X as I thought it may improve performance of my algorithm, however it proved to be redundant in the testing I performed, so I didn't include it.
+
+A17: Yes, absolutely. But the report should make it clear what has been implemented and what hasn't. Also, if you mention an idea that you haven't implemented, then the justification for why it wasn't included is important.
+
+
+Q18:  will it be okay to have a single python file that carries out both encoding and decoding of the input file rather than 2 separate files?
+
+A18: No, you need two separate files. Make sure your program works with the script provided.
+
+
+Q19:  Is  the input file you use to test a standard file using only ASCII characters?
+
+A19:  I will be using a standard latex file in ASCII (that does not use the inputenc package). However, if your code can handle utf-8 then that's absolutely fine.
+
+
+Q20:   Please could you explain what constitutes as an "idea" ?
+
+A20: That's tricky... Imagine you only had one slide to talk about your work with six bullet points : what would you write?
+
+
+Q21: For the .tex files you are testing with, will they have CRLF line endings, LF line endings or a mix of both?
+
+A21: You should be ready for any case.
+
+
+Q22: What exactly counts as one "idea" in compression? How should we split them in the report?
+
+A22: See A17 and A20.
+
+
+Q23: Will you check our encoder/decoder for error-handling (empty or otherwise incorrect inputs)?
+
+A23: No, you needn't worry about that.
+
+
+Q24: Will the file be encoded in ASCII ("latin-1" in Python) or Unicode ("utf-8")?
+
+A24: See A20.
+
+
+Q25: Will the file have Windows or Unix style line endings?
+
+A25: See A21.
+
+
+Q26: Should the compression report focus on compression performance, time/space complexity and/or implementation details of our approaches?
+
+A26: It's difficult to assess the "quality" of a idea. Please try and convince me of either its originality (esp. if it's your own idea) or its appropriateness (e.g. how does it improve compression performance). Since the performance test does not assess complexity, I suggest you leave that discussion out ouf the report entirely.
+
+
+Q27: Does everything that the decoder needs to reconstruct the input need to be stored in the .lz file if we're going for a dynamic approach? Eg for huffman coding could the .lz file be just the binary string, but a dynamically-constructed frequency table be stored elsewhere in a different file?
+
+A27: For the example you give, the answer is No because the auxiliary file is based on the input file. However, you may use a static file (e.g. the frequency table of the English language) that does not depend on the input file. See A16.
+
+
+Q28: How/where should we inform you of which packages you need to pip install?
+
+A28: Sorry I forgot to mention that. You may include package information at the end of your report.
+
+
+Q29: in your lecture notes, you say that LZW is patented. Does this mean we can’t implement it for the assignment, or would it be okay to use in this case?
+
+A29: ALl patents for LZW expired by 2004, so it's okay to use it.
