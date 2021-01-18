@@ -32,12 +32,13 @@ print("Input size: \t" + str(inputSize) + "\n")
 # do decoding here
 
 
-inputFile = open(inFile,'r')
+inputFile = open(inFile,'rb')
 outputFile = open(decodedFile,'w')
 
+data = inputFile.read()
 characterStream = []
-for line in inputFile:
-    characterStream.extend(line.split(','))
+for i in range(0,len(data),2):
+    characterStream.append(str(data[i]+data[i+1]))
 
 dictionary = []
 for x in range(0,256):

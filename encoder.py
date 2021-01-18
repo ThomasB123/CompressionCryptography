@@ -12,22 +12,7 @@
 import os
 import sys
 
-if len(sys.argv) == 1:
-    inFile = input('Enter a .tex file name > ')
-elif len(sys.argv) > 2:
-    print('You must only give 1 file name')
-    exit()
-else:
-    inFile = sys.argv[1]
-if '.' not in inFile:
-    print('Please give a valid file name')
-    exit()
-if inFile.split('.')[1] != 'tex':
-    print('You must give a .tex file')
-    exit()
-if not os.path.isfile(inFile):
-    print('That is not a valid file name')
-    exit()
+inFile = sys.argv[1]
 fileName = inFile.split('.')[0]
 encodedFile = fileName + '.lz'
 
@@ -72,25 +57,42 @@ encodedFile = fileName + '.lz'
 
 # huffman coding and then run length encoding?
 
+
+# Plan:
+# Huffman
+# Context Mixing
+# LZW
+# BWT
+# Move-To-Front
+# Run-Length-Encoding
+
+# remember to accommodate both \n and \n\r
+
+
+
+
 # LZW implementation:
 
-inputFile = open(inFile,'r')
-outputFile = open(encodedFile,'w')
+inputFile = open(inFile,'rb')
+outputFile = open(encodedFile,'wb')
 
+data = inputFile.read()
 characterStream = []
-for line in inputFile:
-    for character in line:
-        characterStream.append(character)
+for byte in data:
+    characterStream.append(bytes([byte]))
 
 def LZW():
     dictionary = {}
     for x in range(0,256):
-        dictionary[chr(x)] = x
+        dictionary[bytes(chr(x),'utf-8')] = x
     i = 256
     characterIndex = 0
-    string = ''
+    #string = b''
     while characterIndex < len(characterStream):
-        string += characterStream[characterIndex]
+        try:
+            string += bytes([characterStream[characterIndex]])
+        except:
+            string = characterStream[characterIndex]
         while (string in dictionary) and (characterIndex < len(characterStream)-1):
             characterIndex += 1
             string += characterStream[characterIndex]
@@ -99,12 +101,16 @@ def LZW():
             i += 1
         dictionary[string] = i
         i += 1
-        outputFile.write(str(dictionary[string[:-1]])+',')
+        #print(dictionary[string[:-1]].to_bytes(2,byteorder='big'))
+        outputFile.write(dictionary[string[:-1]].to_bytes(2,byteorder='big'))
         string = string[-1]
         characterIndex += 1
-    outputFile.write(str(dictionary[string[-1]]))
+    outputFile.write(string.to_bytes(2,byteorder='big'))
     # come back to this later:
     # think is related to character formattting or something
+
+LZW()
+
 
 def updateModel(characterStream,context,maxOrder):
     index = 0
@@ -142,7 +148,7 @@ def H(char,probs):
             high += probs[i]
             if i == char:
                 return high
-
+'''
 def PPM(characterStream,context,maxOrder):
     #maxOrder = 2
     #context = {}
@@ -186,7 +192,8 @@ def PPM(characterStream,context,maxOrder):
                 print(currentCharacter,Lstar,Hstar)
             contextOrder -= 1
         index += 1
-
+'''
+'''
 # context based compression here:
 # adaptive context
 # use 5 character context for now
@@ -198,7 +205,7 @@ newContext = updateModel(characterStream,context,maxOrder) # use this to update 
 print(newContext)
 PPM(characterStream,newContext,2)
 print(bin(int(1/3*64)))
-
+'''
 inputFile.close()
 outputFile.close()
 
