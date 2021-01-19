@@ -139,7 +139,7 @@ I considered using Dynamic Markov compression, which uses predictive arithmetic 
 except that the input is predicted one bit at a time rather than one byte at a time
 \href{https://mattmahoney.net/dc/dce.html#Section_422}{Explanation}
 
-\section{LZW}
+\section{Lempel-Ziv-Welch (LZW)}
 
 Lempel-Ziv-Welch (LZW) is appropriate for a large tex file since there are likely to be repeated occurrences 
 of both sequences of letters (words) and sequences of words (sentences). 
@@ -178,13 +178,29 @@ Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution
 Symbol Ranking - Order-n, modeled by time since last seen.
 Burrows-Wheeler Transform - Bytes are sorted by context, then modeled by order-0 Symbol Ranking
 \href{https://en.wikipedia.org/wiki/Burrows-Wheeler_transform}{check this}
+Within the time constraints I was unable to get a working version of the BWT \cite{TextBenchmark}.. 
 
 
 \section{Move-to-front transform}
-The move-to-front (MTF) transform allows for encoding a stream of bytes, 
-and performs particularly well on sorted byte streams \cite{TextBenchmark}.
-\cite{GoogleCompression}
-Within the time constraints I was unable to get a working version of the MTF transform. 
+The move-to-front (MTF) transform, which I first read about in \cite{GoogleCompression}, 
+is a very powerful transform which significantly improves the compression performance of 
+various algorithms such as Huffman coding and LZW. 
+It works by simple moving the last symbol seen to the front, such that its index in the table becomes 0. 
+This is similar to what the Run-Length-Transform (RLT) does, however, the MTF transform 
+is a big improvement over RLT since it transforms not just runs of bytes but also other kinds of 
+string patterns. 
+This is possible since it actually outputs a character's position in the symbol table, rather than the 
+character itself, allowing it to output the same sequence of position codes but this sequence might denote 
+different strings at different states of the process. 
+This idea of the same token representing different strings at different times is possible because 
+the symbol table is transformed in a defined way at both the encoding and decoded stages, allowing 
+the decoder to recreate the table exactly as it was when the encoder reached a given character. 
+While this transform works well on highly-redundant files such as images, 
+it does not perform well on user-created text-based files since they are often not highly-redundant 
+and don't contain many runs of distinct bytes and similar-context strings. 
+For the purposes of this assignment I need to use a transform which can accept seemingly-random input 
+and produce an output of redundant bytes, and this can be done much more effectively by the BWT. 
+As such I will not use the MTF transform here.
 
 
 \section{Run-length encoding}
