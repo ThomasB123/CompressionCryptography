@@ -168,17 +168,29 @@ LZ predictive - ROLZ with dictionary size of l
 
 
 \section{Burrows-Wheeler Transform (BWT)}
-The Burrows-Wheeler Transform will rearrange a character string into runs of similar characters. 
-This makes it very easy to use move-to-front transform and then run-length encoding.
-Since in this scenario we are able to scan the entire file before encoding it, 
-The BWT improves the efficiency of the compression algorithm without storing any extra data other than the 
-position of the first original character. 
+The Burrows-Wheeler Transform (BWT) rearranges a character string into runs of similar characters \cite{burrows1994block}. 
+The BWT is appropriate for this assignment because it is possible to scan and manipulate the entire file 
+before having to encoding it. 
+This is a fundamental difference between BWT and PPM, since PPM does not require access to the entire file 
+at once. 
+BWT works by taking an input string with little redundancy or predictability and outputting a string with 
+a large amount of repeating characters and thus high redundancy. 
+The crucial reason this works is that the 'sorting' of the characters done by Burrows-Wheeler Forward 
+in the encoding process can be reversed by Burrows-Wheeler Back in the decoding process. 
+
+The BWT is a pre-processing step which is done before using a compression algorithm such as LZW or 
+even just run-length encoding. 
+This algorithm improves the efficiency of the compression algorithm used afterwards, without storing 
+any extra data other than the position of the first original character. 
+This means that BWT is a virtually free way to get better compression results since it only increases 
+computation requirements. 
+Many of the best text-based compression algorithms use BWT \cite{TextBenchmark}. 
+Within the time constraints I was unable to get a working version of the BWT. 
+
 we can use the Burrows-Wheeler transform (BWT) converts a list of symbols into a much more structured list.
 Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
 Symbol Ranking - Order-n, modeled by time since last seen.
 Burrows-Wheeler Transform - Bytes are sorted by context, then modeled by order-0 Symbol Ranking
-\href{https://en.wikipedia.org/wiki/Burrows-Wheeler_transform}{check this}
-Within the time constraints I was unable to get a working version of the BWT \cite{TextBenchmark}.. 
 
 
 \section{Move-to-front transform}
