@@ -177,7 +177,13 @@ BWT works by taking an input string with little redundancy or predictability and
 a large amount of repeating characters and thus high redundancy. 
 The crucial reason this works is that the 'sorting' of the characters done by Burrows-Wheeler Forward 
 in the encoding process can be reversed by Burrows-Wheeler Back in the decoding process. 
-
+To transform a string in the forward section of the algorithm, we insert a marker character at the start 
+of the string, and then generate all of the cyclic shifts of this new string. 
+Next, we sort these cyclic shifts in ascending order and take the last character of each shifted string. 
+This is our output, it's a partially sorted version of our original string, with a marker character added 
+at some index. 
+The important property of this partially sorted string is that it has more redundancy than the original, 
+meaning it lends itself much better to compression algorithms. 
 The BWT is a pre-processing step which is done before using a compression algorithm such as LZW or 
 even just run-length encoding. 
 This algorithm improves the efficiency of the compression algorithm used afterwards, without storing 
@@ -186,11 +192,6 @@ This means that BWT is a virtually free way to get better compression results si
 computation requirements. 
 Many of the best text-based compression algorithms use BWT \cite{TextBenchmark}. 
 Within the time constraints I was unable to get a working version of the BWT. 
-
-we can use the Burrows-Wheeler transform (BWT) converts a list of symbols into a much more structured list.
-Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
-Symbol Ranking - Order-n, modeled by time since last seen.
-Burrows-Wheeler Transform - Bytes are sorted by context, then modeled by order-0 Symbol Ranking
 
 
 \section{Move-to-front transform}
