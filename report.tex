@@ -216,9 +216,24 @@ and produce an output of redundant bytes, and this can be done much more effecti
 As such I will not use the MTF transform here.
 
 
-\section{Run-length encoding}
-Run-length encoding (RLE) is where the actual compression will happen, after the data has been transformed twice by 
-BWT and MTF.
+\section{Context Mixing}
+
+Context mixing is based on PPM in that it is comprised of a predictor and a coder, but it is an improvement 
+over PPM in that the predictor is actually a combination of multiple models which have been trained on 
+different contexts. 
+The most useful contexts for compressing tex files are the previous $n$ bytes before the symbol, 
+(the context used in PPM), and the previous $n$ words. 
+There are other contexts which can be used for different file types to achieve better results. 
+The weighted combination of these two models often provides a more accurate prediction than either 
+model on its own. 
+The disadvantage of using context mixing is that it takes longer and uses more memory, since we have to 
+store two models and read both of them to calculate our more accurate prediction. 
+This is a tradeoff worth making in this assignment since time taken and memory usage are not assessed, but 
+compression ratio is, and combining statistical models will yield more accurate predictions of the next 
+character and thus better compression results. 
+Context mixing produces the best lossless text compression results outside of using a neural network \cite{TextBenchmark}. 
+Within the timeframe I was unable to produce a working context mixing encoder and decoder. 
+
 
 \href{https://sites.google.com/site/datacompressionguide/}{this is good}
 \href{https://en.wikipedia.org/wiki/PAQ}{.}
