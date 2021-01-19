@@ -179,8 +179,13 @@ Symbol Ranking - Order-n, modeled by time since last seen.
 Burrows-Wheeler Transform - Bytes are sorted by context, then modeled by order-0 Symbol Ranking
 \href{https://en.wikipedia.org/wiki/Burrows-Wheeler_transform}{check this}
 
+
 \section{Move-to-front transform}
-The move-to-front (MTF) transform allows for encoding a stream of bytes, and performs particularly well on sorted byte streams.
+The move-to-front (MTF) transform allows for encoding a stream of bytes, 
+and performs particularly well on sorted byte streams \cite{TextBenchmark}.
+\cite{GoogleCompression}
+Within the time constraints I was unable to get a working version of the MTF transform. 
+
 
 \section{Run-length encoding}
 Run-length encoding (RLE) is where the actual compression will happen, after the data has been transformed twice by 
@@ -192,7 +197,6 @@ BWT and MTF.
 \href{https://www.mattmahoney.net/dc/text.html}{Benchmark}
 
 
-\cite{TextBenchmark}
 
 \bibliographystyle{plain}
 \bibliography{references}
