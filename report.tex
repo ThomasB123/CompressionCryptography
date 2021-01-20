@@ -90,18 +90,15 @@
 \maketitle
 
 
-
 \section{Long short-term memory (LSTM)}
-Long short-term memory (LSTM) is a recurrent neural network
-
-Why it's appropriate for this context.
-
-How it works
-
-Why I didn't do it
-
-LSTM is used in cmix \cite{cmix}, which produces the best results for enwik8 and 
-up until 2021 \cite{bellard2021lossless} produced the best compression on enwik9 \cite{TextBenchmark}. 
+Long short-term memory (LSTM) is appropriate for this assignment since it achieves state-of-the-art 
+results on numerous text compression benchmarks \cite{cmix,TextBenchmark}. 
+LSTM is similar to context mixing in that it uses a combination of multiple models to predict the next 
+character, the difference is that these models are built using recurrent neural networks, instead of 
+simply the previous $n$ words or $n$ bytes, providing more accurate predictions and better compression results. 
+LSTM is used in cmix \cite{cmix}, which produces the best results for enwik8 and up until 2021 \cite{bellard2021lossless} 
+produced the best compression on enwik9 \cite{TextBenchmark}. 
+I was unable to implement a working LSTM system within the time constraints. 
 
 
 \section{Prediction by Partial Matching (PPM)}
