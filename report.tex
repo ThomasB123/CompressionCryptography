@@ -107,37 +107,49 @@ Prediction by Partial Matching (PPM) is appropriate for a large English tex file
 predictability both in terms of the letters which follow the preceding few letters, 
 as well as the words which often follow on from the last few words. 
 This is where PPM excels. 
-It works by using a statistical model, which can be thought of as a table, 
-of how likely a given character is to appear next, given the context of the previous $n$ characters, where $n$ is 
-the length of the context. 
-This model is 'trained' on other English tex files, and stored as a separate json file, 
-to be used by the encoder and decoder. 
-The model is stored using a 3-dimensional dictionary data structure, since this is the fastest way of accessing a large 
+It works by using a statistical model, stored as an external file to be used by both the encoder and decoder, 
+which denotes how likely a given character is to appear next, given the context of the previous $n$ characters, 
+where $n$ is the length of the context. 
+This model is 'trained' on other English tex files, and stored in a json format. 
+The encoder uses the model to encode each byte of input data from the tex file as a shorter sequence of bits, 
+thus achieving compression. 
+In my implementation I take the entire bit stream from the encoder and convert it to bytes by splitting 
+every 8 bits up and writing the byte representation to the lz file. 
+The decoder then reads the binary file as input and converts it back to a stream of bits. 
+Using the same external json file it can decode this bit stream back into the original tex file, since it 
+follows the same algorithm as the encoder but in reverse. 
+With regards to using method A, B, or C to assign frequencies to the escape character, I chose to use 
+Method C. 
+It is the most suitable for this implementation since it takes into account the fact that some contexts can 
+be followed by virtually any other character by giving the escape symbol an appropriate count, whilst not 
+reducing the count of other symbols. 
+
+The model is stored using a 3-dimensional dictionary data structure, since a dictionary is the fastest way of accessing a large 
 dataset in this situation, but it can be thought of as a 2-dimensional table for the purpose of explaining how it works. 
 The columns of the table are the different context lengths and each entry under the column $n$ contains the context, 
 an $n$ length string of characters that precede a certain character, the character which follows the context, 
 and the number of times we have seen this context followed by the given character. 
+So in the encoding process we scan the file one character at a time and for each character we count 
+how many times we have seen the $x$ sequence of characters preceding it, where $x$ iterates from 0 to $n$, 
+if $x$ is 0 then we just count how many times we have seen the current character. 
+If we imagine our dictionary as a table then this count goes under the $x$'th column, and on the row 
+corresponding the $x$ length string which is the current character's context. 
 The maximum context length $n$ can be varied depending on the situation, but I am using a maximum context length of 5. 
 Given more time I would further investigate how increasing this maximum up to 10 affects the tradeoff between 
 time taken for the encoding and decoding processes and the level of compression achieved. 
+
 The encoder uses this statistical model of similar tex files to predict how likely it is that the current character follows 
 the previous $n$ characters. 
 This likelihood is encoded using Arithmetic Coding rather than Huffman Coding, since its codewords 
 encode messages rather than being limited to symbols. 
 There is also no need to work out all of the tags of a given length, meaning greater efficiency. 
-Method C.
 
-Prediction by Partial Matching (PPM)
-Order-n e.g. o0,o1,o2,... - symbols are bytes, modeled by frequency distribution in context of last n bytes
-order-n, modeled in longest context matched, but dropping to lower orders for byte counts of 0.
+modeled in longest context matched, but dropping to lower orders for byte counts of 0.
 Since the .tex file will be typeset in English, it is possible to predict the next character, 
 given the previous character(s). As such, a statistical model of english text is appropriate to use. 
 This statistical model can be 'trained' on lots of english text such as Alice in Wonderland, 
 and other .tex documents such as the lecture notes for this module. 
 When using PPM, there are three methods for assigning frequencies to the escape symbol. 
-The most appropriate method for this scenario is Method C since it takes into account the fact that 
-some contexts can be followed by virtually any other character by giving the escape symbol 
-an appropriate count, whilst not reducing the count of other symbols.
 I considered using Dynamic Markov compression, which uses predictive arithmetic coding similar to prediction by partial matching (PPM), 
 except that the input is predicted one bit at a time rather than one byte at a time
 \href{https://mattmahoney.net/dc/dce.html#Section_422}{Explanation}
