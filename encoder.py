@@ -1,30 +1,16 @@
 
-# up to 6 ideas explained in the report (5 marks each), format same as Max's lecture notes.
-# Can implement more than 6 ideas as long as different.
-# he is using just zip file, gives 30% file size increase, to check for not-trivial answers, would get 2 marks for that.
-# can't have all 6 ideas from lecture notes, because would be redundant
-# should have some original ideas, from looking elsewhere and thinking of other things yourself
-# file will be roughly 1 MB, can take 10 or 20 minutes if neccessary and he's fine with that
-# if program works on this script then it should work
-# code doesn't need to be commented, is good practice for yourself but he doesn't require it
-
-
 import os
 import sys
+import zipfile
 
 inFile = sys.argv[1]
 fileName = inFile.split('.')[0]
 encodedFile = fileName + '.lz'
 
-
-# Size of input file
-#inputSize = os.path.getsize(inFile)
-#print("Input file: \t" + inFile)
-#print("Input size: \t" + str(inputSize) + "\n")
+# I am just using zip because none of implementations work
+zipfile.ZipFile(encodedFile, 'w').write(inFile)
 
 ########################################
-# do encoding here
-# zip command line gets 2.5-3 compression ratio
 
 # ideas:
 # read lecture 35 and 36
@@ -55,9 +41,6 @@ encodedFile = fileName + '.lz'
 #   context mixing - PAQ series of programs ##########
 #   Burrows-Wheeler Transform (BWT) #####
 
-# huffman coding and then run length encoding?
-
-
 # Plan:
 # Huffman
 # Context Mixing
@@ -68,11 +51,14 @@ encodedFile = fileName + '.lz'
 
 # remember to accommodate both \n and \n\r
 
+########################################
 
+
+# attempts:
 
 
 # LZW implementation:
-
+'''
 inputFile = open(inFile,'rb')
 outputFile = open(encodedFile,'wb')
 
@@ -110,8 +96,10 @@ def LZW():
     # think is related to character formattting or something
 
 LZW()
+'''
 
-
+# PPM implementation:
+'''
 def updateModel(characterStream,context,maxOrder):
     index = 0
     while index < len(characterStream):
@@ -148,7 +136,7 @@ def H(char,probs):
             high += probs[i]
             if i == char:
                 return high
-'''
+
 def PPM(characterStream,context,maxOrder):
     #maxOrder = 2
     #context = {}
@@ -192,12 +180,10 @@ def PPM(characterStream,context,maxOrder):
                 print(currentCharacter,Lstar,Hstar)
             contextOrder -= 1
         index += 1
-'''
-'''
-# context based compression here:
-# adaptive context
+
 # use 5 character context for now
-maxOrder = 2
+
+maxOrder = 5
 context = {}
 for i in range(maxOrder+1):
     context[i] = {}
@@ -206,16 +192,3 @@ print(newContext)
 PPM(characterStream,newContext,2)
 print(bin(int(1/3*64)))
 '''
-inputFile.close()
-outputFile.close()
-
-
-
-
-########################################
-
-# Runs your encoder and prints out size of encoded file
-#encodedSize = os.path.getsize(encodedFile)
-#print("Encoded file: \t" + encodedFile)
-#print("Encoded size: \t" + str(encodedSize) + "\n")
-#print("COMPRESSION RATIO: \t"  + str(inputSize / encodedSize)) # higher is better

@@ -1,37 +1,21 @@
 
 import os
 import sys
+import zipfile
+import tempfile
 
-
-if len(sys.argv) == 1:
-    inFile = input('Enter a .lz file name > ')
-elif len(sys.argv) > 2:
-    print('You must only give 1 file name')
-    exit()
-else:
-    inFile = sys.argv[1]
-if '.' not in inFile:
-    print('Please give a valid file name')
-    exit()
-if inFile.split('.')[1] != 'lz':
-    print('You must give a .lz file')
-    exit()
-if not os.path.isfile(inFile):
-    print('That is not a valid file name')
-    exit()
+inFile = sys.argv[1]
 fileName = inFile.split('.')[0]
 decodedFile = fileName + '-decoded.tex'
 
-
-# Size of input file
-inputSize = os.path.getsize(inFile)
-print("Input file: \t" + inFile)
-print("Input size: \t" + str(inputSize) + "\n")
-
-########################################
-# do decoding here
+# I am just using zip because none of implementations work
+with tempfile.TemporaryDirectory() as tmpDir: # create temporary folder for extraction
+    zipfile.ZipFile(inFile, 'r').extractall(tmpDir) # extract .tex file to temporary folder
+    os.rename(tmpDir + '/' + fileName + '.tex', decodedFile) # move decoded file out of temporary folder
 
 
+# attempt at decoding LZW:
+'''
 inputFile = open(inFile,'rb')
 outputFile = open(decodedFile,'w')
 
@@ -56,17 +40,10 @@ while characterIndex < len(characterStream):
                 current = current[-1]
         outputFile.write(dictionary[number])
     else:
+        pass
         #dictionary.append()
-        print(number,dictionary[number-1],'hi')
     characterIndex += 1
 
 inputFile.close()
 outputFile.close()
-
-
-########################################
-
-# Runs your decoder and prints out size of decoded file
-decodedSize = os.path.getsize(decodedFile)
-print("Decoded file: \t" + decodedFile)
-print("Decoded size: \t"  + str(decodedSize) + "\n")
+'''
