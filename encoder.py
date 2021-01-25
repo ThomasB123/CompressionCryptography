@@ -1,38 +1,60 @@
 
 import os
 import sys
-import zipfile
+import struct
 
 inFile = sys.argv[1]
 fileName = inFile.split('.')[0]
 encodedFile = fileName + '.lz'
 
-# I am just using zip because none of implementations work
-zipfile.ZipFile(encodedFile, 'w').write(inFile)
+# LZW:
+
+n = os.path.getsize(inFile) # work out number of bits in file
+maxTableSize = pow(2,int(n)) # define maximum table size
+file = open(inFile, 'r')
+data = file.read()
+
+dictSize = 256
+dictionary = {}
+for i in range(dictSize):
+    dictionary[chr(i)] = i
+
+string = ''
+tokens = []
+for symbol in data:
+    newString = string + symbol
+    if newString in dictionary: # if already seen this sequence
+        string = newString # extend
+    else: # if this is a new sequence, then add it to dictionary
+        tokens.append(dictionary[string])
+        if len(dictionary) <= maxTableSize:
+            dictionary[newString] = dictSize
+            dictSize += 1
+        string = symbol
+
+if string in dictionary: # for last sequence at end of file
+    tokens.append(dictionary[string])
+
+# write tokens to file
+outFile = open(encodedFile, 'wb')
+if dictSize > 65535:
+    mode = '>L' # 4 bytes per token (long), supports worst case scenario for files up to 4GB
+    outFile.write(struct.pack('>B',1)) # write 1 if using long
+else:
+    mode = '>H' # 2 bytes per token (short), supports worst case scenario for files up to 65KB
+    outFile.write(struct.pack('>B',0)) # write 0 if using short
+
+for token in tokens:
+    outFile.write(struct.pack(mode,int(token))) # unsigned integer, big-endian byte order
+
+outFile.close()
+file.close()
+
+
 
 ########################################
 
-# ideas:
-# read lecture 35 and 36
 # statistical compression - two properties: frequency of symbols and context
-#   Huffman coding
-#       prefix codes
-#       use canonical huffman tree
-#       adaptive huffman coding
-#       codewords are only defined for symbols not messsages
-#   Arithmetic coding
-#       works at the sequence level, assigning a particular tag to any sequence,
-#       without working out all tags for all sequences of the same length
-#       better than huffman 
-#       use integers only in practice
-#       carry out operations in binary not decimal
-# structural compression
-#   Lempel-Ziv LZ77
-#       two methods above are for memoryless source
-#       this is for encoding fixed file of data efficiently
-#   Lempel-Ziv LZ78
-#       LZW
-#       LZMW, LZAP, LZY ####################
 # context-based compression
 #   adaptive context, no more than 10 character context
 #   prediction by partial matching PPM #####
@@ -41,62 +63,10 @@ zipfile.ZipFile(encodedFile, 'w').write(inFile)
 #   context mixing - PAQ series of programs ##########
 #   Burrows-Wheeler Transform (BWT) #####
 
-# Plan:
-# Huffman
-# Context Mixing
-# LZW
-# BWT
-# Move-To-Front
-# Run-Length-Encoding
-
-# remember to accommodate both \n and \n\r
-
 ########################################
 
 
-# attempts:
-
-
-# LZW implementation:
-'''
-inputFile = open(inFile,'rb')
-outputFile = open(encodedFile,'wb')
-
-data = inputFile.read()
-characterStream = []
-for byte in data:
-    characterStream.append(bytes([byte]))
-
-def LZW():
-    dictionary = {}
-    for x in range(0,256):
-        dictionary[bytes(chr(x),'utf-8')] = x
-    i = 256
-    characterIndex = 0
-    #string = b''
-    while characterIndex < len(characterStream):
-        try:
-            string += bytes([characterStream[characterIndex]])
-        except:
-            string = characterStream[characterIndex]
-        while (string in dictionary) and (characterIndex < len(characterStream)-1):
-            characterIndex += 1
-            string += characterStream[characterIndex]
-        if string[:-1] not in dictionary:
-            dictionary[string[:-1]] = i
-            i += 1
-        dictionary[string] = i
-        i += 1
-        #print(dictionary[string[:-1]].to_bytes(2,byteorder='big'))
-        outputFile.write(dictionary[string[:-1]].to_bytes(2,byteorder='big'))
-        string = string[-1]
-        characterIndex += 1
-    outputFile.write(string.to_bytes(2,byteorder='big'))
-    # come back to this later:
-    # think is related to character formattting or something
-
-LZW()
-'''
+# other attempts:
 
 # PPM implementation:
 '''

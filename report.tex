@@ -97,22 +97,23 @@ of both sequences of letters (words) and sequences of words (sentences).
 This is where LZW excels, since it builds up longer and longer sequences of characters in its dictionary 
 which can then be encoded as a vastly shorter sequence, possibly just 2 bytes. 
 My idea for how to use LZW was to encode each token as the smallest possible number of bytes, 
-each byte can encode a number between 0 and 255, so with 2 bytes we can store any number between 
+each byte can encode a number between 0 and 255, this means with 2 bytes we can store any number between 
 0 and 65535. 
 Therefore if our dictionary only contains a maximum of 65536 entries then we can encode every token as 
 2 bytes. 
-If the tex file is so large that there are more than 65536 entries in the dictionary then we can simple 
+If the tex file is so large that there are more than 65536 entries in the dictionary then we can simply 
 increment the number of bytes used to encode each token. 
-The number of bytes required to encode each token will be included in the encoder file, so the decoder 
+The number of bytes required to encode each token will be included in the encoder file, which means the decoder 
 knows how to decode the tokens and build the dictionary properly. 
 The program worked well on tex files which were just plain text, such as examples from the lecture notes, 
 but when it reached a tab and some other special characters it went wrong. 
 Having investigated for quite some time I believe that the issue is with the decoder but within the 
-time constraints I have been unable to fix it, so I have left the faulty code in my submission 
+time constraints I have been unable to fix it. 
+Therefore, I have left the faulty code in my submission 
 (commented out of course) to demonstrate my attempt. 
-I chose to use LZW over over LZ variants such as LZ77 and ROLZ since I think that for this assignment 
+I chose to use LZW over LZ variants such as LZ77 and ROLZ since I think that for this assignment 
 LZW is most appropriate. 
-There may be huge gaps between repeated instances of sequences in the large tex file, which would hurts 
+There may be huge gaps between repeated instances of sequences in the large tex file, which would hurt 
 the efficiency of LZ77, and ROLZ is not necessary here since we only have to compress one tex file, 
 so there is no context variation. 
 
@@ -122,7 +123,7 @@ so there is no context variation.
 Prediction by Partial Matching (PPM) is appropriate for a large English tex file since it is possible to 
 predict the next character given the previous character(s). 
 As such, a statistical model of english text is appropriate to use. 
-This statistical model can be 'trained' on lots of english text such as Alice in Wonderland, 
+This statistical model can be 'trained' on lots of English text such as Alice in Wonderland, 
 and other tex documents such as the lecture notes for this module. 
 It works by using a statistical model, stored as an external file to be used by both the encoder and decoder, 
 which denotes how likely a given character is to appear next, given the context of the previous $n$ characters, 
@@ -135,9 +136,9 @@ every 8 bits up and writing the byte representation to the lz file.
 The decoder then reads the binary file as input and converts it back to a stream of bits. 
 Using the same external json file it can decode this bit stream back into the original tex file, since it 
 follows the same algorithm as the encoder but in reverse. 
-With regards to using method A, B, or C to assign frequencies to the escape character, I chose to use 
+With regards to using Method A, B, or C to assign frequencies to the escape character, I chose to use 
 Method C. 
-It is the most suitable for this implementation since it takes into account the fact that some contexts can 
+This is because it is the most suitable for this implementation since it takes into account the fact that some contexts can 
 be followed by virtually any other character by giving the escape symbol an appropriate count, whilst not 
 reducing the count of other symbols. 
 I chose to use a maximum context length of 5, but given more time I would further investigate how 
@@ -153,7 +154,7 @@ my attempt in the encoder, but commented out, as a demonstration of my efforts.
 \section{Burrows-Wheeler Transform (BWT)}
 The Burrows-Wheeler Transform (BWT) rearranges a character string into runs of similar characters \cite{burrows1994block}. 
 The BWT is appropriate for this assignment because it is possible to scan and manipulate the entire file 
-before having to encoding it. 
+before having to encode it. 
 This is a fundamental difference between BWT and PPM, since PPM does not require access to the entire file 
 at once. 
 BWT works by taking an input string with little redundancy or predictability and outputting a string with 
@@ -182,7 +183,7 @@ Within the time constraints I was unable to get a working version of the BWT.
 The move-to-front (MTF) transform, which I first read about in \cite{GoogleCompression}, 
 is a very powerful transform which significantly improves the compression performance of 
 various algorithms such as Huffman coding and LZW. 
-It works by simple moving the last symbol seen to the front, such that its index in the table becomes 0. 
+It works by moving the last symbol seen to the front, such that its index in the table becomes 0. 
 This is similar to what the Run-Length-Transform (RLT) does, however, the MTF transform 
 is a big improvement over RLT since it transforms not just runs of bytes but also other kinds of 
 string patterns. 
@@ -223,8 +224,8 @@ Within the time constraints I was unable to produce a working context mixing enc
 \section{Long short-term memory (LSTM)}
 Long short-term memory (LSTM) is appropriate for this assignment since it achieves state-of-the-art 
 results on numerous text compression benchmarks \cite{cmix,TextBenchmark}. 
-LSTM is similar to context mixing in that it uses a combination of multiple models to predict the next 
-character, the difference is that these models are built using recurrent neural networks, instead of 
+LSTM is similar to context mixing in that it uses a combination of multiple models to predict the next character. 
+The difference is that these models are built using recurrent neural networks, instead of 
 simply the previous $n$ words or $n$ bytes, providing more accurate predictions and better compression results. 
 LSTM is used in cmix \cite{cmix}, which produces the best results for enwik8 and up until 2021 \cite{bellard2021lossless} 
 produced the best compression on enwik9 \cite{TextBenchmark}. 

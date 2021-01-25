@@ -1,49 +1,56 @@
 
-import os
 import sys
-import zipfile
-import tempfile
+import struct
 
 inFile = sys.argv[1]
 fileName = inFile.split('.')[0]
 decodedFile = fileName + '-decoded.tex'
 
-# I am just using zip because none of implementations work
-with tempfile.TemporaryDirectory() as tmpDir: # create temporary folder for extraction
-    zipfile.ZipFile(inFile, 'r').extractall(tmpDir) # extract .tex file to temporary folder
-    os.rename(tmpDir + '/' + fileName + '.tex', decodedFile) # move decoded file out of temporary folder
+# LZW:
 
+file = open(inFile, 'rb')
+tokens = []
+nextCode = 256
+plaintext = ''
+string = ''
 
-# attempt at decoding LZW:
-'''
-inputFile = open(inFile,'rb')
-outputFile = open(decodedFile,'w')
+(byteType, ) = struct.unpack('>B',file.read(1)) # read 1st byte of file, which is a 0 or 1
+if byteType == 1: # if 1 then each token is 4 bytes, long unsigned integer
+    length = 4
+    mode = '>L'
+else: # if 0 then each token is 2 bytes, short unsigned integer
+    length = 2
+    mode = '>H'
 
-data = inputFile.read()
-characterStream = []
-for i in range(0,len(data),2):
-    characterStream.append(str(data[i]+data[i+1]))
+while True:
+    token = file.read(length) # read x bytes at a time to get each token
+    if len(token) != length:
+        break
+    (data, ) = struct.unpack(mode, token) # unsigned integer and big-endian byte order
+    tokens.append(data)
 
-dictionary = []
-for x in range(0,256):
-    dictionary.append(chr(x))
-i = 256
-characterIndex = 0
-current = ''
-while characterIndex < len(characterStream):
-    number = int(characterStream[characterIndex])
-    if number < len(dictionary):
-        for x in dictionary[number]:
-            current += x
-            if current not in dictionary:
-                dictionary.append(current)
-                current = current[-1]
-        outputFile.write(dictionary[number])
-    else:
-        pass
-        #dictionary.append()
-    characterIndex += 1
+# Building and initializing the dictionary
+dictSize = 256
+dictionary = {}
+for i in range(dictSize):
+    dictionary[i] = chr(i)
 
-inputFile.close()
-outputFile.close()
-'''
+# iterating through the codes.
+# LZW Decompression algorithm
+for code in tokens:
+    if code not in dictionary:
+        dictionary[code] = string + string[0]
+    plaintext += dictionary[code]
+    if len(string) != 0:
+        dictionary[nextCode] = string + dictionary[code][0]
+        nextCode += 1
+    string = dictionary[code]
+
+# storing the decompressed string into a file
+outFile = open(decodedFile, 'w')
+for data in plaintext:
+    outFile.write(data)
+    
+outFile.close()
+file.close()
+
