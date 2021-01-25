@@ -46,8 +46,8 @@ scenario for a file of size 65KB.
 However if the file is large enough that we require more than 65535 dictionary entries, we can increase 
 the number of bytes used to encode each token to 3 (supporting 16MB files) or to 4, accommodating the worst 
 case scenario for files up to 4GB. 
-The change is made by switching the mode used to encode the tokens (struct.pack()) from short unsigned integer (H)
-to long unsigned integer (L). 
+The change is made by switching the mode used to encode the tokens from short unsigned integer (H) to long 
+unsigned integer (L). 
 Since the tex file that my program will be tested on is around 200 pages, which should be around 1MB in size, 
 it is most likely that the 3 byte method will be used, but the upper limit of 4 bytes is clearly sufficient. 
 The number of bytes required to encode each token is included in the encoded file (as the first byte), 
@@ -66,7 +66,7 @@ so there is no context variation.
 
 Prediction by Partial Matching (PPM) is appropriate for a large English tex file since it is possible to 
 predict the next character given the previous character(s). 
-As such, a statistical model of english text is appropriate to use. 
+As such, a statistical model of English text is appropriate to use. 
 This statistical model can be 'trained' on lots of English text such as Alice in Wonderland, 
 and other tex documents such as the lecture notes for this module. 
 It works by using a statistical model, stored as an external file to be used by both the encoder and decoder, 
@@ -108,7 +108,7 @@ in the encoding process can be reversed by Burrows-Wheeler Back in the decoding 
 To transform a string in the forward section of the algorithm, we insert a marker character at the start 
 of the string, and then generate all of the cyclic shifts of this new string. 
 Next, we sort these cyclic shifts in ascending order and take the last character of each shifted string. 
-This is our output, it's a partially sorted version of our original string, with a marker character added 
+This is the output, it's a partially sorted version of our original string, with a marker character added 
 at some index. 
 The important property of this partially sorted string is that it has more redundancy than the original, 
 meaning it lends itself much better to compression algorithms. 
@@ -142,7 +142,7 @@ it does not perform well on user-created text-based files since they are often n
 and don't contain many runs of distinct bytes and similar-context strings. 
 For the purposes of this assignment I need to use a transform which can accept seemingly-random input 
 and produce an output of redundant bytes, and this can be done much more effectively by the BWT. 
-As such I will not use the MTF transform here.
+As such I will not use the MTF transform here. 
 
 
 \section{Context Mixing (CM)}
@@ -157,7 +157,7 @@ The weighted combination of these two models often provides a more accurate pred
 model on its own. 
 The disadvantage of using context mixing is that it takes longer and uses more memory, since we have to 
 store two models and read both of them to calculate our more accurate prediction. 
-This is a tradeoff worth making in this assignment since time taken and memory usage are not assessed, but 
+This is a trade-off worth making in this assignment since time taken and memory usage are not assessed, but 
 compression ratio is, and combining statistical models will yield more accurate predictions of the next 
 character and thus better compression results. 
 Context mixing produces the best lossless text compression results outside of using a neural network \cite{TextBenchmark}, 
