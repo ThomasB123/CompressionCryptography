@@ -99,18 +99,21 @@ which can then be encoded as a vastly shorter sequence, possibly just 2 bytes.
 My idea for how to use LZW was to encode each token as the smallest possible number of bytes, 
 each byte can encode a number between 0 and 255, this means with 2 bytes we can store any number between 
 0 and 65535. 
-Therefore if our dictionary only contains a maximum of 65536 entries then we can encode every token as 
-2 bytes. 
-If the tex file is so large that there are more than 65536 entries in the dictionary then we can simply 
-increment the number of bytes used to encode each token. 
-The number of bytes required to encode each token will be included in the encoder file, which means the decoder 
-knows how to decode the tokens and build the dictionary properly. 
-The program worked well on tex files which were just plain text, such as examples from the lecture notes, 
-but when it reached a tab and some other special characters it went wrong. 
-Having investigated for quite some time I believe that the issue is with the decoder but within the 
-time constraints I have been unable to fix it. 
-Therefore, I have left the faulty code in my submission 
-(commented out of course) to demonstrate my attempt. 
+Therefore if our maximum token is 65535, we can encode every token as 2 bytes, supporting the worst case 
+scenario for a file of size 65KB. 
+However if the file is large enough that we require more than 65535, we can increase the number of bytes 
+used to encode each token to 4, accommodating the worst case scenario for files up to 4GB. 
+The change is made by switching the mode used to encode the tokens (struct.pack()) from short unsigned integer (H)
+to long unsigned integer (L). 
+Since the tex file that my program will be tested on is around 200 pages, which should be around 1MB in size, 
+this upper limit of 4 bytes is clearly sufficient. 
+It is also clear that only using 2 bytes would likely be insufficient. 
+The number of bytes required to encode each token is included in the encoded file (as the first byte), 
+which means the decoder knows how to decode the tokens and build the dictionary properly. 
+The program performs well on the lecture notes files (1.3 ratio) and achieves good results on many large 
+text benchmarks, scoring a ratio of 1.84 on the Bible and 1.99 on As You Like It. 
+However it has trouble with Alice in Wonderland (incorrect decoded file size), perhaps related to some 
+special characters. 
 I chose to use LZW over LZ variants such as LZ77 and ROLZ since I think that for this assignment 
 LZW is most appropriate. 
 There may be huge gaps between repeated instances of sequences in the large tex file, which would hurt 
@@ -138,9 +141,9 @@ Using the same external json file it can decode this bit stream back into the or
 follows the same algorithm as the encoder but in reverse. 
 With regards to using Method A, B, or C to assign frequencies to the escape character, I chose to use 
 Method C. 
-This is because it is the most suitable for this implementation since it takes into account the fact that some contexts can 
-be followed by virtually any other character by giving the escape symbol an appropriate count, whilst not 
-reducing the count of other symbols. 
+This is because it is the most suitable for this implementation since it takes into account the fact that 
+some contexts can be followed by virtually any other character by giving the escape symbol an appropriate count, 
+whilst not reducing the count of other symbols. 
 I chose to use a maximum context length of 5, but given more time I would further investigate how 
 increasing this maximum up to 10 affects the tradeoff between time taken for the encoding and decoding 
 processes and the level of compression achieved. 
