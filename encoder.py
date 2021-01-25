@@ -37,38 +37,28 @@ if string in dictionary: # for last sequence at end of file
 
 # write tokens to file
 outFile = open(encodedFile, 'wb')
-if dictSize > 65535:
-    mode = '>L' # 4 bytes per token (long), supports worst case scenario for files up to 4GB
-    outFile.write(struct.pack('>B',1)) # write 1 if using long
-else:
-    mode = '>H' # 2 bytes per token (short), supports worst case scenario for files up to 65KB
-    outFile.write(struct.pack('>B',0)) # write 0 if using short
-
-for token in tokens:
-    outFile.write(struct.pack(mode,int(token))) # unsigned integer, big-endian byte order
+if dictSize > 16777215: # 256^3 -1
+    # 4 bytes per token (long), supports worst case scenario for files up to 4GB
+    outFile.write(struct.pack('>B',4)) # write 4
+    for token in tokens:
+        outFile.write(struct.pack('>L',token)) # unsigned integer, big-endian byte order
+elif dictSize > 65535: # 256^2 -1
+    # 3 bytes per token, supports worst case scenario for files up to 16MB
+    outFile.write(struct.pack('>B',3)) # write 3
+    for token in tokens:
+        outFile.write(struct.pack('>BH', *divmod(token, 1<<16))) # single byte + 2 bytes integer, big-endian byte order
+else: # dictSize < 256^2 -1
+    # 2 bytes per token (short), supports worst case scenario for files up to 65KB
+    outFile.write(struct.pack('>B',2)) # write 2
+    for token in tokens:
+        outFile.write(struct.pack('>H',token)) # unsigned integer, big-endian byte order
 
 outFile.close()
 file.close()
 
 
 
-########################################
-
-# statistical compression - two properties: frequency of symbols and context
-# context-based compression
-#   adaptive context, no more than 10 character context
-#   prediction by partial matching PPM #####
-#       Roshal Archive file format (RAR)
-#   methods B and C
-#   context mixing - PAQ series of programs ##########
-#   Burrows-Wheeler Transform (BWT) #####
-
-########################################
-
-
-# other attempts:
-
-# PPM implementation:
+# attempt at PPM implementation:
 '''
 def updateModel(characterStream,context,maxOrder):
     index = 0
