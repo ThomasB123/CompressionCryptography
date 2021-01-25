@@ -9,70 +9,12 @@
 \usepackage{hyperref}
 \usepackage[caption=false]{subfig}
 
-
 \numberwithin{equation}{section}
-
-\theoremstyle{plain}
-\newtheorem{theorem}	[equation]	{Theorem}
-\newtheorem{conjecture}	[equation]	{Conjecture}
-\newtheorem{corollary}	[equation]	{Corollary}
-\newtheorem{definition}	[equation]	{Definition}
-\newtheorem{example}	[equation]	{Example}
-\newtheorem{lemma}		[equation]	{Lemma}
-\newtheorem{problem}	[equation]	{Problem}
-\newtheorem{proposition}[equation]	{Proposition}
-\newtheorem{remark}		[equation]	{Remark}
-
-\theoremstyle{definition}
-\newtheorem{claim}		[equation]	{Claim}
-\newtheorem{exercise}   {Exercise}  [section]
-\newtheorem{answer}     {Answer}    [section]
 
 \usepackage[noend]{algpseudocode}
 \usepackage{algorithm}
 
-\newcommand{\GF}{\mathrm{GF}}
-\newcommand{\rk}{\mathrm{rk}}
-\newcommand{\id}{\mathrm{id}}
-\newcommand{\dH}{d_\mathrm{H}}
-\newcommand{\dmin}{d_{\min}}
-\newcommand{\wH}{w_\mathrm{H}}
-\newcommand{\wmin}{w_{\min}}
-\newcommand{\lcm}{\mathrm{lcm}}
-
-\newcommand{\N}{\mathbb{N}}
-\newcommand{\Z}{\mathbb{Z}}
-\newcommand{\Q}{\mathbb{Q}}
-\newcommand{\R}{\mathbb{R}}
-
-\renewcommand{\i}{\mathrm{i}}
-\newcommand{\e}{\mathrm{e}}
-
-\newcommand{\divides}{\,|\,}
-
-\newcommand{\probability}{\mathbb{P}}
-\newcommand{\expectation}{\mathbb{E}}
-
-
-	\newcommand{\Important}[1]{\textcolor{red}{#1}}
-	\newcommand{\Structure}[1]{\textcolor{blue}{#1}}
-	\newcommand{\Reference}[1]{\textcolor{teal}{#1}}
-	\newcommand{\Define}[1]{\textcolor{purple}{#1}}
-
-
 \newcommand{\alphabet}[1]{\mathcal{#1}}
-
-\newcommand{\code}[1]{\mathsf{#1}}
-\newcommand{\Paritycheck}           {\code{PC}}
-\newcommand{\Repetition}            {\code{R}}
-\newcommand{\Hamming}               {\code{H}}
-\newcommand{\Golay}                 {\code{G}}
-\newcommand{\ReedMuller}            {\code{RM}}
-\newcommand{\ReedSolomon}           {\code{RS}}
-\newcommand{\GeneralizedReedSolomon}{\code{GRS}}
-\newcommand{\Alternant}             {\code{A}}
-\newcommand{\Goppa}                 {\code{\Gamma}}
-
 
 \renewcommand{\thesection}{\arabic{section}}
 
@@ -111,9 +53,8 @@ It is also clear that only using 2 bytes would likely be insufficient.
 The number of bytes required to encode each token is included in the encoded file (as the first byte), 
 which means the decoder knows how to decode the tokens and build the dictionary properly. 
 The program performs well on the lecture notes files (1.3 ratio) and achieves good results on many large 
-text benchmarks, scoring a ratio of 1.84 on the Bible and 1.99 on As You Like It. 
-However it has trouble with Alice in Wonderland (incorrect decoded file size), perhaps related to some 
-special characters. 
+text benchmarks, scoring a ratio of 1.84 on the Bible, 1.99 on As You Like It, 2.17 on Alice in Wonderland, 
+and 1.71 on The Project Gutenberg World Factbook. 
 I chose to use LZW over LZ variants such as LZ77 and ROLZ since I think that for this assignment 
 LZW is most appropriate. 
 There may be huge gaps between repeated instances of sequences in the large tex file, which would hurt 

@@ -47,7 +47,7 @@ for code in tokens:
     string = dictionary[code]
 
 # storing the decompressed string into a file
-outFile = open(decodedFile, 'w')
+outFile = open(decodedFile, 'w', newline='')
 for data in plaintext:
     outFile.write(data)
     

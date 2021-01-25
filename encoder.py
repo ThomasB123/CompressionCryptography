@@ -11,7 +11,7 @@ encodedFile = fileName + '.lz'
 
 n = os.path.getsize(inFile) # work out number of bits in file
 maxTableSize = pow(2,int(n)) # define maximum table size
-file = open(inFile, 'r')
+file = open(inFile, 'r', newline='')
 data = file.read()
 
 dictSize = 256
