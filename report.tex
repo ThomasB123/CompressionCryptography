@@ -65,37 +65,38 @@ so there is no context variation.
 \section{Prediction by Partial Matching (PPM)}
 
 Prediction by Partial Matching (PPM) is appropriate for a large English tex file since it is possible to 
-predict the next character given the previous character(s). 
-As such, a statistical model of English text is appropriate to use. 
-This statistical model can be 'trained' on lots of English text such as Alice in Wonderland, 
-and other tex documents such as the lecture notes for this module. 
-It works by using a statistical model, stored as an external file to be used by both the encoder and decoder, 
+predict the next character given the previous character(s), meaning that a statistical model of English 
+text is appropriate to use. 
+This statistical model can be 'trained' on lots of English text compression benchmarks 
+(Alice in Wonderland, Bible, Factbook) and other tex documents such as the lecture notes for this module. 
+It works by using a statistical model, stored as an external json file to be used by both the encoder and decoder, 
 which denotes how likely a given character is to appear next, given the context of the previous $n$ characters, 
 where $n$ is the length of the context. 
-This model is 'trained' on other English tex files, and stored in a json format. 
-The encoder uses the model to encode each byte of input data from the tex file as a shorter sequence of bits, 
-thus achieving compression. 
+The encoder uses an adaptive arithmetic encoder to encode sequences from the input stream with a certain 
+probability, and the uses this model to encode each byte of input data from the tex file as a shorter 
+sequence of bits. 
+The goal of the encoder is to use the shortest possible sequence of bits for each input sequence. 
+This is how compression is achieved. 
 In my implementation I take the entire bit stream from the encoder and convert it to bytes by splitting 
 every 8 bits up and writing the byte representation to the lz file. 
 The decoder then reads the binary file as input and converts it back to a stream of bits. 
 Using the same external json file it can decode this bit stream back into the original tex file, since it 
 follows the same algorithm as the encoder but in reverse. 
-With regards to using Method A, B, or C to assign frequencies to the escape character, I chose to use 
-Method C. 
+With regards to using Method A, B, or C to assign frequencies to the escape character, I chose to use Method C. 
 This is because it is the most suitable for this implementation since it takes into account the fact that 
 some contexts can be followed by virtually any other character by giving the escape symbol an appropriate count, 
 whilst not reducing the count of other symbols. 
-I chose to use a maximum context length of 5, but given more time I would further investigate how 
-increasing this maximum up to 10 affects the tradeoff between time taken for the encoding and decoding 
-processes and the level of compression achieved. 
-Also, I chose to use Arithmetic Coding rather than Huffman Coding, since its codewords encode messages 
-rather than being limited to symbols, and it's more efficient. 
+I chose to use a maximum context length of 4 due to memory constraints, since increasing this parameter increases 
+memory usage exponentially at $O(257^{n})$. 
+Decreasing this parameter would ease memory usage and make the program run much faster, however it would produce 
+significantly worse compression results. 
 PPM performs very well on text compression benchmarks such as enwik8 and enwik9 \cite{TextBenchmark}. 
-I was unable to get a working version of PPM within the time constraints, so I have left the code of 
-my attempt in the encoder, but commented out, as a demonstration of my efforts. 
+My attempt at implementing PPM was unsuccessful within the time constraints, so I have left parts of my code in 
+the encoder file, commented out, as a demonstration of my efforts. 
 
 
 \section{Burrows-Wheeler Transform (BWT)}
+
 The Burrows-Wheeler Transform (BWT) rearranges a character string into runs of similar characters \cite{burrows1994block}. 
 The BWT is appropriate for this assignment because it is possible to scan and manipulate the entire file 
 before having to encode it. 
@@ -119,7 +120,10 @@ any extra data other than the position of the first original character.
 This means that BWT is a virtually free way to get better compression results since it only increases 
 computation requirements. 
 Many of the best text-based compression algorithms use BWT \cite{TextBenchmark}. 
-Within the time constraints I was unable to get a working version of the BWT. 
+I did not end up implementing BWT because I was unable to produce a working version of the transform 
+within the time constraints. 
+Had I been able to implement the transform as a preprocessing step before the LZW or PPM compression, I expect 
+it would have improved the compression ratio significantly, with the only trade-off being additional computation time. 
 
 
 \section{Move-to-front transform (MTF)}
@@ -142,12 +146,12 @@ it does not perform well on user-created text-based files since they are often n
 and don't contain many runs of distinct bytes and similar-context strings. 
 For the purposes of this assignment I need to use a transform which can accept seemingly-random input 
 and produce an output of redundant bytes, and this can be done much more effectively by the BWT. 
-As such I will not use the MTF transform here. 
+Implementing MTF rather than BWT would produce worse compression results, so I will not use the MTF transform here. 
 
 
 \section{Context Mixing (CM)}
 
-Context mixing is based on PPM in that it is comprised of a predictor and a coder, but it is an improvement 
+Context Mixing is based on PPM in that it is comprised of a predictor and a coder, but it is an improvement 
 over PPM in that the predictor is actually a combination of multiple models which have been trained on 
 different contexts. 
 The most useful contexts for compressing tex files are the previous $n$ bytes before the symbol, 
@@ -155,17 +159,20 @@ The most useful contexts for compressing tex files are the previous $n$ bytes be
 There are other contexts which can be used for different file types to achieve better results. 
 The weighted combination of these two models often provides a more accurate prediction than either 
 model on its own. 
-The disadvantage of using context mixing is that it takes longer and uses more memory, since we have to 
+The disadvantage of using Context Mixing is that it takes longer and uses more memory, since we have to 
 store two models and read both of them to calculate our more accurate prediction. 
 This is a trade-off worth making in this assignment since time taken and memory usage are not assessed, but 
 compression ratio is, and combining statistical models will yield more accurate predictions of the next 
 character and thus better compression results. 
-Context mixing produces the best lossless text compression results outside of using a neural network \cite{TextBenchmark}, 
+Context Mixing produces the best lossless text compression results outside of using a neural network \cite{TextBenchmark}, 
 and is also used in the PAQ series of lossless data compression programs \cite{TextCompression}. 
-Within the time constraints I was unable to produce a working context mixing encoder and decoder. 
+Within the time constraints I was unable to produce a working Context Mixing encoder and decoder. 
+However if I had been able to create a CM system, I anticipate that it would have produced the second 
+best compression ratio of these 6 ideas, second only to LSTM. 
 
 
 \section{Long short-term memory (LSTM)}
+
 Long short-term memory (LSTM) is appropriate for this assignment since it achieves state-of-the-art 
 results on numerous text compression benchmarks \cite{cmix,TextBenchmark}. 
 LSTM is similar to context mixing in that it uses a combination of multiple models to predict the next character. 

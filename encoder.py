@@ -98,7 +98,7 @@ def H(char,probs):
                 return high
 
 def PPM(characterStream,context,maxOrder):
-    #maxOrder = 2
+    #maxOrder = 4
     #context = {}
     #for i in range(maxOrder+1):
     #    context[i] = {}
@@ -141,9 +141,9 @@ def PPM(characterStream,context,maxOrder):
             contextOrder -= 1
         index += 1
 
-# use 5 character context for now
+# use 4 character context
 
-maxOrder = 5
+maxOrder = 4
 context = {}
 for i in range(maxOrder+1):
     context[i] = {}
